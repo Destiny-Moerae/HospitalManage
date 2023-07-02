@@ -2,20 +2,20 @@
 
 /** @type Egg.EggPlugin */
 module.exports = {
-  // had enabled by egg
-  // static: {
-  //   enable: true,
-  // }
-  mongoose: {
-    enable: true,
-    package: 'egg-mongoose',
-  },
   validate: {
     enable: true,
     package: 'egg-validate',
   },
+  mongoose: {
+    enable: true,
+    package: 'egg-mongoose',
+  },
   jwt: {
     enable: true,
-    package: "egg-jwt"
-  }
+    package: 'egg-jwt',
+  },
+  swaggerdoc: {
+    enable: true,
+    package: 'egg-swagger-doc',
+  },
 }

@@ -2,7 +2,7 @@ module.exports = {
   // jwt
   jwtSecret: '1qaz111111111111111111111111111111111111111111111111',
   // mongodb url
-  mongoDbUrl: 'mongodb://127.0.0.1/blog',
+  mongoDbUrl: 'mongodb://127.0.0.1/hospital',
   // 七牛云配置
   qiniu: {
     bucket: 'wtfout',
