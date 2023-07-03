@@ -1,9 +1,9 @@
 /* eslint valid-jsdoc: "off" */
 
-'use strict'
+'use strict';
 
 // 导入userConfig
-const userConfig = require('./config.user')
+const userConfig = require('./config.user');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
@@ -13,27 +13,27 @@ module.exports = appInfo => {
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = exports = {}
+  const config = exports = {};
 
-  config.userName = 'admin'
-  config.baseRouter = '/api/v1'
-  config.qiniu = userConfig.qiniu
+  config.userName = 'admin';
+  config.baseRouter = '/api/v1';
+  config.qiniu = userConfig.qiniu;
 
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1688176906909_442'
+  config.keys = appInfo.name + '_1688176906909_442';
   // add your middleware config here
-  config.middleware = ['errorhandler']
+  config.middleware = [ 'errorhandler' ];
   config.security = {
     csrf: false,
-  }
+  };
   config.mongoose = {
     url: userConfig.mongoDbUrl,
     options: {},
-  }
+  };
   config.jwt = {
     secret: userConfig.jwtSecret,
-  }
+  };
 
   config.swaggerdoc = {
     dirScanner: './app/controller',
@@ -42,9 +42,9 @@ module.exports = appInfo => {
       description: '博客后端接口文档',
       version: '1.0.0',
     },
-    schemes: ['http', 'https'],
-    consumes: ['application/json', 'multipart/form-data'],
-    produces: ['application/json', 'multipart/form-data'],
+    schemes: [ 'http', 'https' ],
+    consumes: [ 'application/json', 'multipart/form-data' ],
+    produces: [ 'application/json', 'multipart/form-data' ],
     securityDefinitions: { // 配置接口安全授权方式
       Jwt: {
         type: 'apiKey',
@@ -56,25 +56,25 @@ module.exports = appInfo => {
     // enableValidate: true,
     routerMap: true,
     enable: true,
-  }
+  };
 
   config.onerror = {
-    all (err, ctx) {
-      console.log(err)
-      ctx.body = 'error'
-      ctx.status = 500
+    all(err, ctx) {
+      console.log(err);
+      ctx.body = 'error';
+      ctx.status = 500;
     },
-    html (err, ctx) {
-      ctx.body = '<h3>error</h3>'
-      ctx.status = 500
+    html(err, ctx) {
+      ctx.body = '<h3>error</h3>';
+      ctx.status = 500;
     },
-    json (err, ctx) {
-      ctx.body = { message: 'error' }
-      ctx.status = 500
+    json(err, ctx) {
+      ctx.body = { message: 'error' };
+      ctx.status = 500;
     },
-  }
+  };
 
   return {
     ...config,
-  }
-}
+  };
+};

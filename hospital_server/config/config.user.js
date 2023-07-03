@@ -10,4 +10,4 @@ module.exports = {
     accessKey: 'RAIR5AdfkGE7QfpRp1whOwwIZl8VOFzKuRVNlflO',
     secretKey: 'Yiy_B69HicjRYuHLUJ-Rcxmk5ivtAJBpRb2y5cn6',
   },
-}
+};

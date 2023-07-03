@@ -1,6 +1,6 @@
 module.exports = app => {
-  const mongoose = app.mongoose
-  const Schema = mongoose.Schema
+  const mongoose = app.mongoose;
+  const Schema = mongoose.Schema;
 
   const SurgerySchema = new Schema(
     {
@@ -29,9 +29,9 @@ module.exports = app => {
       },
     },
     {
-      collection: 'Surgery',
+      collection: 'surgery',
       versionKey: false,
     }
-  )
-  return mongoose.model('Surgery', SurgerySchema)
-}
+  );
+  return mongoose.model('Surgery', SurgerySchema);
+};

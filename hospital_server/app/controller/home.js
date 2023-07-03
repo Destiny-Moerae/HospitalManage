@@ -1,21 +1,21 @@
-'use strict'
+'use strict';
 
-const { Controller } = require('egg')
+const { Controller } = require('egg');
 
 class HomeController extends Controller {
-  async index () {
-    const { ctx } = this
-    ctx.body = 'hi, egg'
+  async index() {
+    const { ctx } = this;
+    ctx.body = 'hi, egg';
   }
 
-  async create () {
-    const { ctx } = this
-    const { name, age } = ctx.request.body
+  async create() {
+    const { ctx } = this;
+    const { name, age } = ctx.request.body;
     ctx.body = {
       name,
-      age
-    }
+      age,
+    };
   }
 }
 
-module.exports = HomeController
+module.exports = HomeController;

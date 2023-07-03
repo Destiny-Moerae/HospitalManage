@@ -1,13 +1,13 @@
 /* eslint-disable jsdoc/check-tag-names */
-'use strict'
+'use strict';
 
-const Controller = require('egg').Controller
+const Controller = require('egg').Controller;
 /**
  * @Controller 科室管理
  */
 class departmentController extends Controller {
   constructor(ctx) {
-    super(ctx)
+    super(ctx);
 
     this.queryRule = {
       page: {
@@ -30,7 +30,7 @@ class departmentController extends Controller {
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{1,20}$/,
       },
-    }
+    };
 
 
     this.createRule = {
@@ -39,8 +39,13 @@ class departmentController extends Controller {
         min: 2,
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
-      }
-    }
+      },
+      description: {
+        type: 'string',
+        min: 2,
+        max: 200,
+      },
+    };
 
   }
 
@@ -52,27 +57,27 @@ class departmentController extends Controller {
    * @request query string pageSize 每页数量
    * @request query string name 科室名称
    */
-  async index () {
-    const { ctx, service } = this
-    const data = ctx.query
-    ctx.validate(this.queryRule, data)
-    console.log('data', data)
-    const res = await service.department.index(data)
-    ctx.helper.success({ ctx, res })
+  async index() {
+    const { ctx, service } = this;
+    const data = ctx.query;
+    ctx.validate(this.queryRule, data);
+    console.log('data', data);
+    const res = await service.department.index(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
-   * @summary 创建分类
-   * @description 创建分类
-   * @router post /api/v1/categories
+   * @summary 创建科室
+   * @description 创建科室
+   * @router post /api/v1/department
    * @request body createDepartmentRequest *body
    */
-  async create () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    ctx.validate(this.createRule, data)
-    const res = await service.department.create(data)
-    ctx.helper.success({ ctx, res })
+  async create() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    ctx.validate(this.createRule, data);
+    const res = await service.department.create(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -82,16 +87,16 @@ class departmentController extends Controller {
    * @request path string *id
    * @request body updateDepartmentRequest *body
    */
-  async update () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    const id = ctx.params.id
-    ctx.validate(this.createRule, data)
+  async update() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    const id = ctx.params.id;
+    ctx.validate(this.createRule, data);
     const res = await service.department.update({
       id,
-      name: data.name,
-    })
-    ctx.helper.success({ ctx, res })
+      ...data,
+    });
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -100,13 +105,13 @@ class departmentController extends Controller {
    * @router delete /api/v1/department/{id}
    * @request path string *id
    */
-  async destroy () {
-    const { ctx, service } = this
-    const id = ctx.params.id
-    const res = await service.department.delete(id)
-    ctx.helper.success({ ctx, res })
+  async destroy() {
+    const { ctx, service } = this;
+    const id = ctx.params.id;
+    const res = await service.department.delete(id);
+    ctx.helper.success({ ctx, res });
   }
 
 }
 
-module.exports = departmentController
+module.exports = departmentController;

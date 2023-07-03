@@ -1,6 +1,6 @@
 module.exports = {
-  // 管理员登录
-  adminLoginRequest: {
+  // 登录
+  userLoginRequest: {
     userName: {
       type: 'string',
       required: true,
