@@ -14,5 +14,5 @@ module.exports = app => {
   router.post(baseRouter + '/login', controller.login.index)
   router.resources('department', baseRouter + '/department', controller.department)
   router.resources('surgery', baseRouter + '/surgery', controller.surgery)
-
+  router.resources('doctor', baseRouter + '/doctor', controller.doctor)
 }
