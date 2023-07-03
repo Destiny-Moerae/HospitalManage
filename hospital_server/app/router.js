@@ -13,5 +13,6 @@ module.exports = app => {
   router.get('/home', controller.home.index)
   router.post(baseRouter + '/login', controller.login.index)
   router.resources('department', baseRouter + '/department', controller.department)
+  router.resources('surgery', baseRouter + '/surgery', controller.surgery)
 
 }

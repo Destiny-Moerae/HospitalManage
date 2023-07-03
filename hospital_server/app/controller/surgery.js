@@ -3,9 +3,9 @@
 
 const Controller = require('egg').Controller
 /**
- * @Controller 科室管理
+ * @Controller 诊室管理
  */
-class departmentController extends Controller {
+class surgeryController extends Controller {
   constructor(ctx) {
     super(ctx)
 
@@ -39,55 +39,57 @@ class departmentController extends Controller {
         min: 2,
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
+      },
+      departmentId: {
+        type: 'string',
       }
     }
 
   }
 
   /**
-   * @summary 获取科室列表
-   * @description 获取科室列表
-   * @router get /api/v1/department
+   * @summary 获取诊室列表
+   * @description 获取诊室列表
+   * @router get /api/v1/surgery
    * @request query string page 页码
    * @request query string pageSize 每页数量
-   * @request query string name 科室名称
+   * @request query string name 诊室名称
    */
   async index () {
     const { ctx, service } = this
     const data = ctx.query
     ctx.validate(this.queryRule, data)
-    console.log('data', data)
-    const res = await service.department.index(data)
+    const res = await service.surgery.index(data)
     ctx.helper.success({ ctx, res })
   }
 
   /**
-   * @summary 创建分类
-   * @description 创建分类
-   * @router post /api/v1/categories
-   * @request body createDepartmentRequest *body
+   * @summary 创建诊室
+   * @description 创建诊室
+   * @router post /api/v1/surgery
+   * @request body createSurgeryRequest *body
    */
   async create () {
     const { ctx, service } = this
     const data = ctx.request.body
     ctx.validate(this.createRule, data)
-    const res = await service.department.create(data)
+    const res = await service.surgery.create(data)
     ctx.helper.success({ ctx, res })
   }
 
   /**
-   * @summary 更新科室
-   * @description 更新科室
-   * @router put /api/v1/department/{id}
+   * @summary 更新诊室
+   * @description 更新诊室
+   * @router put /api/v1/surgery/{id}
    * @request path string *id
-   * @request body updateDepartmentRequest *body
+   * @request body updateSurgeryRequest *body
    */
   async update () {
     const { ctx, service } = this
     const data = ctx.request.body
     const id = ctx.params.id
     ctx.validate(this.createRule, data)
-    const res = await service.department.update({
+    const res = await service.surgery.update({
       id,
       name: data.name,
     })
@@ -95,18 +97,18 @@ class departmentController extends Controller {
   }
 
   /**
-   * @summary 删除科室
-   * @description 删除科室
-   * @router delete /api/v1/department/{id}
+   * @summary 删除诊室
+   * @description 删除诊室
+   * @router delete /api/v1/surgery/{id}
    * @request path string *id
    */
   async destroy () {
     const { ctx, service } = this
     const id = ctx.params.id
-    const res = await service.department.delete(id)
+    const res = await service.surgery.delete(id)
     ctx.helper.success({ ctx, res })
   }
 
 }
 
-module.exports = departmentController
+module.exports = surgeryController
