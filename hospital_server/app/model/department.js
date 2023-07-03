@@ -1,6 +1,6 @@
 module.exports = app => {
-  const mongoose = app.mongoose
-  const Schema = mongoose.Schema
+  const mongoose = app.mongoose;
+  const Schema = mongoose.Schema;
 
   const DepartmentSchema = new Schema(
     {
@@ -25,9 +25,9 @@ module.exports = app => {
       },
     },
     {
-      collection: 'Department',
+      collection: 'department',
       versionKey: false,
     }
-  )
-  return mongoose.model('Department', DepartmentSchema)
-}
+  );
+  return mongoose.model('Department', DepartmentSchema);
+};

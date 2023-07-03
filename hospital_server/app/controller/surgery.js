@@ -1,13 +1,13 @@
 /* eslint-disable jsdoc/check-tag-names */
-'use strict'
+'use strict';
 
-const Controller = require('egg').Controller
+const Controller = require('egg').Controller;
 /**
  * @Controller 诊室管理
  */
 class surgeryController extends Controller {
   constructor(ctx) {
-    super(ctx)
+    super(ctx);
 
     this.queryRule = {
       page: {
@@ -30,7 +30,12 @@ class surgeryController extends Controller {
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{1,20}$/,
       },
-    }
+      departmentId: {
+        type: 'string',
+        required: false,
+        allowEmpty: true,
+      },
+    };
 
 
     this.createRule = {
@@ -40,8 +45,16 @@ class surgeryController extends Controller {
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
       },
-
-    }
+      departmentId: {
+        type: 'string',
+        required: true,
+      },
+      description: {
+        type: 'string',
+        min: 2,
+        max: 200,
+      },
+    };
 
   }
 
@@ -52,13 +65,14 @@ class surgeryController extends Controller {
    * @request query string page 页码
    * @request query string pageSize 每页数量
    * @request query string name 诊室名称
+   * @request query string departmentId 科室id
    */
-  async index () {
-    const { ctx, service } = this
-    const data = ctx.query
-    ctx.validate(this.queryRule, data)
-    const res = await service.surgery.index(data)
-    ctx.helper.success({ ctx, res })
+  async index() {
+    const { ctx, service } = this;
+    const data = ctx.query;
+    ctx.validate(this.queryRule, data);
+    const res = await service.surgery.index(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -67,12 +81,12 @@ class surgeryController extends Controller {
    * @router post /api/v1/surgery
    * @request body createSurgeryRequest *body
    */
-  async create () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    ctx.validate(this.createRule, data)
-    const res = await service.surgery.create(data)
-    ctx.helper.success({ ctx, res })
+  async create() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    ctx.validate(this.createRule, data);
+    const res = await service.surgery.create(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -82,16 +96,16 @@ class surgeryController extends Controller {
    * @request path string *id
    * @request body updateSurgeryRequest *body
    */
-  async update () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    const id = ctx.params.id
-    ctx.validate(this.createRule, data)
+  async update() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    const id = ctx.params.id;
+    ctx.validate(this.createRule, data);
     const res = await service.surgery.update({
       id,
-      name: data.name,
-    })
-    ctx.helper.success({ ctx, res })
+      ...data,
+    });
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -100,13 +114,13 @@ class surgeryController extends Controller {
    * @router delete /api/v1/surgery/{id}
    * @request path string *id
    */
-  async destroy () {
-    const { ctx, service } = this
-    const id = ctx.params.id
-    const res = await service.surgery.delete(id)
-    ctx.helper.success({ ctx, res })
+  async destroy() {
+    const { ctx, service } = this;
+    const id = ctx.params.id;
+    const res = await service.surgery.delete(id);
+    ctx.helper.success({ ctx, res });
   }
 
 }
 
-module.exports = surgeryController
+module.exports = surgeryController;
