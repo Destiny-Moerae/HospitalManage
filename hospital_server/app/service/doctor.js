@@ -9,20 +9,52 @@ class DoctorService extends Service {
 
     const page = parseInt(params.page, 10) || 1
     const pageSize = parseInt(params.pageSize, 10) || 20
-    const query = {}
-    if (params.name) {
-      query.name = new RegExp(params.name, 'i')
+    const necessaryCon = {
+      ...(params.surgeryId && { surgeryId: params.surgeryId }),
     }
 
+    const fuzzyCon = params.name ? { name: new RegExp(params.name, 'i') } : {}
+
+    const query = {
+      $and: [
+        necessaryCon,
+        fuzzyCon,
+      ],
+    }
+    const listPromise = ctx.model.Doctor.aggregate([
+      { $match: query },
+      { $sort: { createTime: -1 } },
+      { $skip: (page - 1) * pageSize },
+      { $limit: pageSize },
+      {
+        $lookup: {
+          from: 'surgery',
+          localField: 'surgeryId',
+          foreignField: '_id',
+          as: 'surgery',
+        },
+      },
+      {
+        $addFields: {
+          surgeryName: { $arrayElemAt: ['$surgery.name', 0] },
+        },
+      },
+      {
+        $project: {
+          surgery: 0,
+          surgeryId: 0,
+        },
+      },
+    ])
     const countPromise = ctx.model.Doctor.countDocuments(query)
-    const listPromise = ctx.model.Doctor
-      .find(query)
-      .sort({ createTime: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .populate('surgeryId')
-      .lean()
-      .exec()
+    // const listPromise = ctx.model.Doctor
+    //   .find(query)
+    //   .sort({ createTime: -1 })
+    //   .skip((page - 1) * pageSize)
+    //   .limit(pageSize)
+    //   .populate('surgeryId')
+    //   .lean()
+    //   .exec()
     const [totalCount, list] = await Promise.all([countPromise, listPromise])
     return {
       data: {
@@ -77,22 +109,6 @@ class DoctorService extends Service {
       }
     }
 
-    const duplicateName = await ctx.model.Doctor.findOne({
-      _id: { $ne: params.id },
-      name: params.name,
-      description: params.description,
-      sex: params.sex,
-      birth: params.birth,
-      idNumber: params.idNumber,
-      phone: params.phone,
-      fee: params.fee,
-    })
-    if (duplicateName) {
-      return {
-        msg: '医生已存在，请重新修改',
-      }
-    }
-
     const updateFields = {}
     if (params.name !== findItem.name) {
       updateFields.name = params.name
@@ -101,22 +117,22 @@ class DoctorService extends Service {
       updateFields.description = params.description
     }
     if (params.sex !== findItem.sex) {
-      upadateField.sex = params.sex
+      updateFields.sex = params.sex
     }
     if (params.birth !== findItem.birth) {
-      upadateField.birth = params.birth
+      updateFields.birth = params.birth
     }
     if (params.idNumber !== findItem.idNumber) {
-      upadateField.idNumber = params.idNumber
+      updateFields.idNumber = params.idNumber
     }
     if (params.phone !== findItem.phone) {
-      upadateField.phone = params.phone
+      updateFields.phone = params.phone
     }
     if (params.fee !== findItem.fee) {
-      upadateField.fee = params.fee
+      updateFields.fee = params.fee
     }
     if (params.phone !== findItem.phone) {
-      upadateField.phone = params.phone
+      updateFields.phone = params.phone
     }
     updateFields.updateTime = ctx.helper.moment()
 

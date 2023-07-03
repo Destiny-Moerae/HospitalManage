@@ -47,7 +47,7 @@ module.exports = app => {
       },
     },
     {
-      collection: 'Doctor',
+      collection: 'doctor',
       versionKey: false,
     }
   )
