@@ -14,10 +14,12 @@ module.exports = app => {
         type: String,
         min: 2,
         max: 200,
+        default: "该诊室暂无描述"
       },
       departmentId: {
         type: 'ObjectId',
         ref: 'Department',
+        required: true,
       },
       createTime: {
         type: Number,

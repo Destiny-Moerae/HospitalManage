@@ -44,6 +44,11 @@ class SurgeryService extends Service {
         msg: '诊室已存在',
       }
     }
+    if (!params.departmentId) {
+      return {
+        msg: '缺少科室id',
+      }
+    }
     const newItem = {
       ...params,
       createTime: ctx.helper.moment(),
@@ -75,6 +80,7 @@ class SurgeryService extends Service {
     const duplicateName = await ctx.model.Surgery.findOne({
       _id: { $ne: params.id },
       name: params.name,
+      description: params.description,
     })
     if (duplicateName) {
       return {
@@ -85,6 +91,9 @@ class SurgeryService extends Service {
     const updateFields = {}
     if (params.name !== findItem.name) {
       updateFields.name = params.name
+    }
+    if (params.description !== findItem.description) {
+      updateFields.description = params.description
     }
     updateFields.updateTime = ctx.helper.moment()
 
@@ -121,6 +130,7 @@ class SurgeryService extends Service {
     }
 
     try {
+
       await ctx.model.Surgery.deleteOne({
         _id: id,
       })

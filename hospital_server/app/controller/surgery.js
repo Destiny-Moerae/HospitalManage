@@ -40,9 +40,7 @@ class surgeryController extends Controller {
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
       },
-      departmentId: {
-        type: 'string',
-      }
+
     }
 
   }

@@ -1,33 +1,55 @@
-// const helper = require('../extend/helper')
-// module.exports = app => {
-//   const mongoose = app.mongoose
-//   const Schema = mongoose.Schema
+module.exports = app => {
+  const mongoose = app.mongoose
+  const Schema = mongoose.Schema
 
-//   const DocSchema = new Schema({
-//     userName: { type: String },
-//     password: { type: String },
-//     authority: { type: Number }
-//   }, {
-//     collection: 'user',
-//     versionKey: false
-//   })
-
-//   const UserModel = mongoose.model('User', DocSchema)
-//   // 开始时预设一个管理员账户
-//   const user = {
-//     userName: 'admin',
-//     password: '123456',
-//     authority: 1
-//   }
-//   // 加密密码后创建
-//   helper.getSaltPassword(user.password).then(async hash => {
-//     user.password = hash
-//     const resUser = await UserModel.find({ username: user.username })
-//     if (resUser.length === 0) {
-//       UserModel.create(user)
-//     }
-//   })
-//   return UserModel
-
-// }
-
+  const DoctorSchema = new Schema(
+    {
+      name: {
+        type: String,
+        min: 2,
+        max: 20,
+        match: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
+      },
+      sex: {
+        type: String,
+      },
+      birth: {
+        type: Number,
+      },
+      idNumber: {
+        type: String,
+      },
+      phone: {
+        type: String,
+      },
+      fee: {
+        type: Number,
+        default: 0
+      },
+      description: {
+        type: String,
+        min: 2,
+        max: 200,
+        default: "该医生暂无描述"
+      },
+      surgeryId: {
+        type: 'ObjectId',
+        ref: 'Surgery',
+        required: true,
+      },
+      createTime: {
+        type: Number,
+        default: 0,
+      },
+      updateTime: {
+        type: Number,
+        default: 0,
+      },
+    },
+    {
+      collection: 'Doctor',
+      versionKey: false,
+    }
+  )
+  return mongoose.model('Doctor', DoctorSchema)
+}
