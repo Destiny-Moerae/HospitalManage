@@ -7,6 +7,7 @@ import {
   IconUser,
   IconHome,
   IconMobile,
+
   // IconMessage,
   // IconSettings,
   // IconHome,
@@ -35,6 +36,12 @@ export const routes = [
     key: 'surgery',
     icon: <IconMobile />,
     componentPath: 'surgery',
+  },
+  {
+    name: 'menu.doctor',
+    key: 'doctor',
+    icon: <IconUser />,
+    componentPath: 'doctor',
   },
   {
     name: 'menu.articles',

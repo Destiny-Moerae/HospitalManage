@@ -42,11 +42,31 @@ class DoctorService extends Service {
         },
       },
       {
-        $project: {
-          surgery: 0,
-          surgeryId: 0,
+        $lookup: {
+          from: 'user',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
         },
       },
+      {
+        $addFields: {
+          name: { $arrayElemAt: ['$user.name', 0] },
+        },
+      },
+      {
+        $addFields: {
+          password: { $arrayElemAt: ['$user.password', 0] },
+        },
+      },
+      {
+        $project: {
+          surgery: 0,
+          authority: 0,
+          user: 0
+        },
+      },
+
     ])
     const countPromise = ctx.model.Doctor.countDocuments(query)
     // const listPromise = ctx.model.Doctor
@@ -70,17 +90,14 @@ class DoctorService extends Service {
 
   async create (params) {
     const { ctx } = this
-    const findItem = await ctx.model.Doctor.findOne({
-      _id: params.id,
-    })
-    if (findItem) {
-      return {
-        msg: '医生已存在',
-      }
-    }
     if (!params.surgeryId) {
       return {
         msg: '缺少诊室id',
+      }
+    }
+    if (!app.mongoose.Types.ObjectId.isValid(params.surgeryId)) {
+      return {
+        msg: '诊室不存在',
       }
     }
     const findSurgery = await ctx.model.Surgery.findOne({
@@ -111,7 +128,8 @@ class DoctorService extends Service {
   }
 
   async update (params) {
-    const { ctx, app } = this
+    console.log('params', params)
+    const { ctx, app, service } = this
     if (!app.mongoose.Types.ObjectId.isValid(params.id)) {
       return {
         msg: '医生不存在',
@@ -126,7 +144,6 @@ class DoctorService extends Service {
       }
     }
 
-    const updateFields = {}
     //如果传入的参数与数据库中的不同，则更新
     // if (params.name && params.name !== findItem.name) {
     //   updateFields.name = params.name
@@ -139,43 +156,36 @@ class DoctorService extends Service {
     //   updateFields.userId = params.userId
     // }
 
-    if (params.surgeryId && params.surgeryId !== findItem.surgeryId) {
-      //判断诊室是否存在
-      const findSurgery = await ctx.model.Surgery.findOne({
-        _id: params.surgeryId,
-      })
-      if (!findSurgery) {
-        return {
-          msg: '诊室不存在',
-        }
+    //判断诊室是否存在
+    if (!app.mongoose.Types.ObjectId.isValid(params.surgeryId)) {
+      return {
+        msg: '诊室不存在',
       }
-      updateFields.surgeryId = params.surgeryId
     }
-
-    if (params.sex && params.sex !== findItem.sex) {
-      updateFields.sex = params.sex
+    const findSurgery = await ctx.model.Surgery.findOne({
+      _id: params.surgeryId,
+    })
+    if (!findSurgery) {
+      return {
+        msg: '诊室不存在',
+      }
     }
-    if (params.birth && params.birth !== findItem.birth) {
-      updateFields.birth = params.birth
+    const updateFields = {
+      ...params,
+      updateTime: ctx.helper.moment(),
     }
-    if (params.phone && params.phone !== findItem.phone) {
-      updateFields.phone = params.phone
-    }
-    if (params.fee && params.fee !== findItem.fee) {
-      updateFields.fee = params.fee
-    }
-    if (params.description && params.description !== findItem.description) {
-      updateFields.phodescriptionne = params.description
-    }
-
-    updateFields.updateTime = ctx.helper.moment()
-
 
     try {
       await ctx.model.Doctor.updateOne(
         { _id: params.id },
         { $set: updateFields }
       )
+
+      await service.user.update({
+        id: params.userId,
+        name: params.name,
+        password: params.password,
+      })
     } catch (err) {
 
       return {

@@ -56,6 +56,43 @@ class UserService extends Service {
       msg: '退出成功',
     }
   }
+
+
+  async update (params) {
+    const { ctx, app } = this
+    if (!app.mongoose.Types.ObjectId.isValid(params.id)) {
+      return {
+        msg: '账户不存在',
+      }
+    }
+    const findItem = await ctx.model.User.findOne({
+      _id: params.id,
+    })
+    if (!findItem) {
+      return {
+        msg: '账户不存在',
+      }
+    }
+
+    const updateFields = {
+      ...params,
+      updateTime: ctx.helper.moment(),
+    }
+
+    try {
+      await ctx.model.User.updateOne(
+        { _id: params.id },
+        { $set: updateFields }
+      )
+    } catch (err) {
+      return {
+        msg: '账户修改失败',
+      }
+    }
+    return {
+      msg: '账户修改成功',
+    }
+  }
 }
 
 module.exports = UserService

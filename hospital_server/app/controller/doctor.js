@@ -22,7 +22,7 @@ class DoctorController extends Controller {
         allowEmpty: true,
         default: 20,
       },
-      name: {
+      fullname: {
         type: 'string',
         required: false,
         allowEmpty: true,
@@ -44,12 +44,18 @@ class DoctorController extends Controller {
 
 
     this.createRule = {
-      name: {
+      fullname: {
         type: 'string',
         required: true,
         min: 2,
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
+      },
+      name: {
+        type: 'string',
+        required: true,
+        min: 2,
+        max: 20,
       },
       password: {
         type: 'string',
@@ -75,7 +81,7 @@ class DoctorController extends Controller {
    * @router get /api/v1/doctor
    * @request query string page 页码
    * @request query string pageSize 每页数量
-   * @request query string name 医生名称
+   * @request query string fullname 医生名称
    * @request query string surgeryId 诊室id
    * @request query string userId 用户id
    */
@@ -114,13 +120,7 @@ class DoctorController extends Controller {
     const id = ctx.params.id
     const res = await service.doctor.update({
       id,
-      sex: data.sex,
-      birth: data.birth,
-      phone: data.phone,
-      fee: data.fee,
-      description: data.description,
-      surgeryId: data.surgeryId
-
+      ...data,
     })
     ctx.helper.success({ ctx, res })
   }

@@ -1,11 +1,17 @@
 module.exports = {
   // 创建医生
   createDoctorRequest: {
-    name: {
+    fullname: {
       type: 'string',
       required: true,
       description: '医生名称',
       example: '李华',
+    },
+    name: {
+      type: 'string',
+      required: true,
+      description: '医生账号',
+      example: 'lihua123',
     },
     password: {
       type: 'string',
@@ -46,8 +52,6 @@ module.exports = {
   },
   // 更新医生
   updateDoctorRequest: {
-
-
     description: {
       type: 'string',
       description: '医生描述新',

@@ -9,7 +9,7 @@ module.exports = app => {
         ref: 'user',
         required: true,
       },
-      name: {
+      fullname: {
         type: String,
         min: 2,
         max: 20,
