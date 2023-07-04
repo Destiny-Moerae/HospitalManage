@@ -86,6 +86,16 @@ class SurgeryService extends Service {
         msg: '缺少科室id',
       }
     }
+    const findDepartment = await ctx.model.Department.findOne({
+      _id: params.departmentId,
+    })
+    if (!findDepartment) {
+      return {
+        msg: '科室不存在',
+      }
+    }
+
+
     const newItem = {
       ...params,
       createTime: ctx.helper.moment(),
@@ -160,7 +170,15 @@ class SurgeryService extends Service {
         msg: '诊室不存在',
       }
     }
-
+    //在删除前诊室是否有医生
+    const doctorList = await ctx.model.Doctor.find({
+      surgeryId: id,
+    })
+    if (doctorList.length > 0) {
+      return {
+        msg: '该诊室下有医生，不能删除',
+      }
+    }
     try {
 
       await ctx.model.Surgery.deleteOne({

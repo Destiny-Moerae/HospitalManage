@@ -15,10 +15,12 @@ class DoctorService extends Service {
 
     const fuzzyCon = params.name ? { name: new RegExp(params.name, 'i') } : {}
 
+    const userIdCon = params.userId ? { userId: params.userId } : {}
     const query = {
       $and: [
         necessaryCon,
         fuzzyCon,
+        userIdCon
       ],
     }
     const listPromise = ctx.model.Doctor.aggregate([
@@ -81,11 +83,26 @@ class DoctorService extends Service {
         msg: '缺少诊室id',
       }
     }
+    const findSurgery = await ctx.model.Surgery.findOne({
+      _id: params.surgeryId,
+    })
+    if (!findSurgery) {
+      return {
+        msg: '诊室不存在',
+      }
+    }
+
+    //创建医生的时候同时创建一个用户
+    const user = await ctx.model.User.create({
+      name: params.name,
+      password: params.password,
+      authority: 0
+    })
     const newItem = {
       ...params,
       createTime: ctx.helper.moment(),
+      userId: user._id
     }
-
     const res = await ctx.model.Doctor.create(newItem)
     return {
       msg: '医生添加成功',
@@ -110,31 +127,49 @@ class DoctorService extends Service {
     }
 
     const updateFields = {}
-    if (params.name !== findItem.name) {
-      updateFields.name = params.name
+    //如果传入的参数与数据库中的不同，则更新
+    // if (params.name && params.name !== findItem.name) {
+    //   updateFields.name = params.name
+    // }
+    // if (params.password && params.password !== findItem.password) {
+    //   updateFields.password = params.password
+    // }
+
+    // if (params.userId && params.userId !== findItem.userId) {
+    //   updateFields.userId = params.userId
+    // }
+
+    if (params.surgeryId && params.surgeryId !== findItem.surgeryId) {
+      //判断诊室是否存在
+      const findSurgery = await ctx.model.Surgery.findOne({
+        _id: params.surgeryId,
+      })
+      if (!findSurgery) {
+        return {
+          msg: '诊室不存在',
+        }
+      }
+      updateFields.surgeryId = params.surgeryId
     }
-    if (params.description !== findItem.description) {
-      updateFields.description = params.description
-    }
-    if (params.sex !== findItem.sex) {
+
+    if (params.sex && params.sex !== findItem.sex) {
       updateFields.sex = params.sex
     }
-    if (params.birth !== findItem.birth) {
+    if (params.birth && params.birth !== findItem.birth) {
       updateFields.birth = params.birth
     }
-    if (params.idNumber !== findItem.idNumber) {
-      updateFields.idNumber = params.idNumber
-    }
-    if (params.phone !== findItem.phone) {
+    if (params.phone && params.phone !== findItem.phone) {
       updateFields.phone = params.phone
     }
-    if (params.fee !== findItem.fee) {
+    if (params.fee && params.fee !== findItem.fee) {
       updateFields.fee = params.fee
     }
-    if (params.phone !== findItem.phone) {
-      updateFields.phone = params.phone
+    if (params.description && params.description !== findItem.description) {
+      updateFields.phodescriptionne = params.description
     }
+
     updateFields.updateTime = ctx.helper.moment()
+
 
     try {
       await ctx.model.Doctor.updateOne(
@@ -142,7 +177,7 @@ class DoctorService extends Service {
         { $set: updateFields }
       )
     } catch (err) {
-      // console.log(err);
+
       return {
         msg: '医生修改失败',
       }
@@ -167,9 +202,21 @@ class DoctorService extends Service {
         msg: '医生不存在',
       }
     }
+    //删除医生前先要检查该医生是否有未完成的出诊
+    const consultList = await ctx.model.Consult.find({
+      doctorId: id,
+    })
+    if (consultList.length > 0) {
+      return {
+        msg: '该医生有未完成的出诊，无法删除',
+      }
+    }
 
     try {
-
+      //删除医生的同时删除用户
+      await ctx.model.User.deleteOne({
+        _id: delItem.userId,
+      })
       await ctx.model.Doctor.deleteOne({
         _id: id,
       })

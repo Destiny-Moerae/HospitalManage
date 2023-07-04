@@ -30,15 +30,33 @@ class DoctorController extends Controller {
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{1,20}$/,
       },
+      userId: {
+        type: 'string',
+        required: false,
+        allowEmpty: true,
+      },
+      surgeryId: {
+        type: 'string',
+        required: false,
+        allowEmpty: true,
+      }
     }
 
 
     this.createRule = {
       name: {
         type: 'string',
+        required: true,
         min: 2,
         max: 20,
         format: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
+      },
+      password: {
+        type: 'string',
+        required: true,
+        min: 6,
+        max: 20,
+        format: /^[\u4e00-\u9fa5A-Za-z0-9_]{6,20}$/,
       },
       surgeryId: {
         type: 'string',
@@ -47,7 +65,8 @@ class DoctorController extends Controller {
 
 
     }
-
+    this.updateRule = {
+    }
   }
 
   /**
@@ -57,6 +76,8 @@ class DoctorController extends Controller {
    * @request query string page 页码
    * @request query string pageSize 每页数量
    * @request query string name 医生名称
+   * @request query string surgeryId 诊室id
+   * @request query string userId 用户id
    */
   async index () {
     const { ctx, service } = this
@@ -91,10 +112,15 @@ class DoctorController extends Controller {
     const { ctx, service } = this
     const data = ctx.request.body
     const id = ctx.params.id
-    ctx.validate(this.createRule, data)
     const res = await service.doctor.update({
       id,
-      name: data.name,
+      sex: data.sex,
+      birth: data.birth,
+      phone: data.phone,
+      fee: data.fee,
+      description: data.description,
+      surgeryId: data.surgeryId
+
     })
     ctx.helper.success({ ctx, res })
   }

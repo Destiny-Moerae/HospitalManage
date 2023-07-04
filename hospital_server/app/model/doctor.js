@@ -4,23 +4,29 @@ module.exports = app => {
 
   const DoctorSchema = new Schema(
     {
+      userId: {
+        type: 'ObjectId',
+        ref: 'user',
+        required: true,
+      },
       name: {
         type: String,
         min: 2,
         max: 20,
         match: /^[\u4e00-\u9fa5A-Za-z0-9_]{2,20}$/,
+        required: true,
       },
       sex: {
         type: String,
+        default: '暂无',
       },
       birth: {
         type: Number,
-      },
-      idNumber: {
-        type: String,
+        default: 0,
       },
       phone: {
         type: String,
+        default: '暂无',
       },
       fee: {
         type: Number,

@@ -1,7 +1,7 @@
 module.exports = {
   // 登录
   userLoginRequest: {
-    userName: {
+    name: {
       type: 'string',
       required: true,
       description: '用户名',
@@ -14,4 +14,4 @@ module.exports = {
       example: '123456',
     },
   },
-};
+}

@@ -118,7 +118,15 @@ class DepartmentService extends Service {
         msg: '科室不存在',
       }
     }
-
+    //在删除科室之前，先检查该科室下是否有诊室
+    const surgeryList = await ctx.model.Surgery.find({
+      departmentId: id,
+    })
+    if (surgeryList.length > 0) {
+      return {
+        msg: '该科室下存在诊室，无法删除',
+      }
+    }
     try {
       await ctx.model.Department.deleteOne({
         _id: id,

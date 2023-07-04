@@ -107,6 +107,12 @@ class ConsultService extends Service {
         msg: '缺少医生id',
       }
     }
+    const findDoctor = await ctx.model.Doctor.findOne({ _id: params.doctorId })
+    if (!findDoctor) {
+      return {
+        msg: '医生不存在',
+      }
+    }
     // console.log("params-service", params)
     const findItems = await ctx.model.Consult.find({ doctorId: params.doctorId })
 
