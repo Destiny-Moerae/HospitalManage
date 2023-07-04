@@ -33,7 +33,7 @@ export const request = (config) => {
       if (error.response && error.response.status) {
         if (error.response.status === 403) {
           // location.href = '/403';
-          location.href = '/#/admin/login';
+          location.href = '/#/user/login';
           Notification.error({
             title: '权限错误',
             content: error.response.data.msg,
@@ -41,7 +41,7 @@ export const request = (config) => {
         }
         if (error.response.status === 401) {
           // location.href = '/401';
-          location.href = '/#/admin/login';
+          location.href = '/#/user/login';
           Notification.error({
             title: 'token错误',
             content: 'token无效或已过期，请重新登录',

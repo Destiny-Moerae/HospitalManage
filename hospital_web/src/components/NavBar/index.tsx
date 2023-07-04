@@ -46,7 +46,7 @@ function Navbar() {
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
         Message.success(res.msg);
-        history.push('/admin/login');
+        history.push('/user/login');
       }
     }
   };

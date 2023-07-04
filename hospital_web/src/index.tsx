@@ -50,7 +50,7 @@ function Index() {
   useEffect(() => {
     if (!checkLogin()) {
       // console.log('checkLogin------------------------------');
-      history.push('/admin/login');
+      history.push('/user/login');
     }
   }, []);
 
@@ -64,7 +64,7 @@ function Index() {
         <Provider store={store}>
           <GlobalContext.Provider value={contextValue}>
             <Switch>
-              <Route path="/admin/login" component={Login} />
+              <Route path="/user/login" component={Login} />
               <Route path="/" component={PageLayout} />
             </Switch>
             <Setting />

@@ -6,6 +6,7 @@ import {
   IconQuestionCircle,
   IconUser,
   IconHome,
+  IconMobile,
   // IconMessage,
   // IconSettings,
   // IconHome,
@@ -28,6 +29,12 @@ export const routes = [
     key: 'department',
     icon: <IconHome />,
     componentPath: 'department',
+  },
+  {
+    name: 'menu.surgery',
+    key: 'surgery',
+    icon: <IconMobile />,
+    componentPath: 'surgery',
   },
   {
     name: 'menu.articles',

@@ -2,7 +2,7 @@ import { request } from './request';
 
 export async function login(data) {
   return request({
-    url: '/admin/login',
+    url: '/user/login',
     method: 'POST',
     data,
   });
@@ -10,7 +10,7 @@ export async function login(data) {
 
 export async function logout() {
   return request({
-    url: '/admin/logout',
+    url: '/user/logout',
     method: 'POST',
   });
 }

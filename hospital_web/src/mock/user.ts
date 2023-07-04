@@ -24,7 +24,7 @@ setupMock({
     });
 
     // 登录
-    Mock.mock(new RegExp('/api/v1/admin/login'), (params) => {
+    Mock.mock(new RegExp('/api/v1/user/login'), (params) => {
       const { userName, password } = JSON.parse(params.body);
       if (!userName) {
         return {

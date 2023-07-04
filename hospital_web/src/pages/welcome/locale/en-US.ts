@@ -1,6 +1,7 @@
 export default {
   'menu.welcome': 'Welcome',
   'menu.department': 'Department',
+  'menu.surgery': 'Surgery',
   'menu.user': 'User',
   'menu.comment': 'Comment',
   'menu.site.headerFooter': 'HeaderFooter',

@@ -71,7 +71,7 @@ export default function LoginForm() {
       <div className={styles['login-form-error-msg']}>{errorMessage}</div>
       <Form className={styles['login-form']} layout="vertical" ref={formRef}>
         <Form.Item
-          field="userName"
+          field="name"
           rules={[
             { required: true, message: local['login.p_userName'] },
             {

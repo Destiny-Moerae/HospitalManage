@@ -56,7 +56,6 @@ class SurgeryService extends Service {
       {
         $project: {
           department: 0,
-          departmentId: 0,
         },
       },
     ])

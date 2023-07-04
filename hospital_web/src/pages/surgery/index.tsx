@@ -9,6 +9,7 @@ import {
   Form,
   Message,
   Popconfirm,
+  Select,
 } from '@arco-design/web-react';
 import { useSelector, useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
@@ -23,7 +24,8 @@ import {
 import useLocale from '../../utils/useLocale';
 import { ReducerState } from '../../redux';
 import styles from './style/index.module.less';
-import { getList, create, update, remove } from '../../api/department';
+import { getList, create, update, remove } from '../../api/surgery';
+import { getList as getDepartmentList } from '../../api/department';
 import { EditableCell, EditableRow } from './edit';
 
 const FormItem = Form.Item;
@@ -42,14 +44,15 @@ function TagsTable() {
   // 这里这个form就存储了表单的数据
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const [title, setTitle] = useState('添加科室');
+  const [title, setTitle] = useState('添加诊室');
+  const [departmentsArr, setDepartmentsArr] = useState([]);
 
   const onUpdate = async (row) => {
     // console.log(row);
     // console.log('update');
     dispatch({ type: TOGGLE_VISIBLE, payload: { visible: true } });
     form.setFieldsValue(row);
-    setTitle('修改科室');
+    setTitle('修改诊室');
   };
 
   const onDelete = async (row) => {
@@ -70,14 +73,18 @@ function TagsTable() {
       render: (_, __, index) => index + 1,
     },
     {
-      title: '科室名称',
+      title: '诊室名称',
       dataIndex: 'name',
       editable: true,
     },
     {
-      title: '科室介绍',
+      title: '诊室介绍',
       dataIndex: 'description',
       editable: true,
+    },
+    {
+      title: '隶属科室',
+      dataIndex: 'departmentName',
     },
     {
       title: '创建时间',
@@ -131,9 +138,22 @@ function TagsTable() {
     },
   ];
 
-  const DepartmentState = useSelector((state: ReducerState) => state.department);
+  const SurgeryState = useSelector((state: ReducerState) => state.surgery);
 
-  const { data, pagination, loading, formParams, visible, confirmLoading } = DepartmentState;
+  const { data, pagination, loading, formParams, visible, confirmLoading } = SurgeryState;
+
+  const getDepartments = async () => {
+    const res: any = await getDepartmentList({
+      page: 1,
+      pageSize: 9999,
+    });
+    console.log('res', res);
+    setDepartmentsArr(res.data.list);
+  };
+
+  useEffect(() => {
+    getDepartments();
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -217,20 +237,20 @@ function TagsTable() {
   return (
     <div className={styles.container}>
       <Breadcrumb style={{ marginBottom: 20 }}>
-        <Breadcrumb.Item>科室管理</Breadcrumb.Item>
+        <Breadcrumb.Item>诊室管理</Breadcrumb.Item>
       </Breadcrumb>
       <Card bordered={false}>
         <div className={styles.toolbar}>
           <div>
             <Button onClick={onAdd} type="primary">
-              添加科室
+              添加诊室
             </Button>
           </div>
           <div>
             <Input.Search
               style={{ width: 300 }}
               searchButton
-              placeholder="请输入科室名称"
+              placeholder="请输入诊室名称"
               onSearch={onSearch}
             />
           </div>
@@ -269,18 +289,31 @@ function TagsTable() {
         >
           <Form {...formItemLayout} form={form}>
             <FormItem
-              label="科室名称"
+              label="诊室名称"
               field="name"
-              rules={[{ required: true, message: '请输入科室名称' }]}
+              rules={[{ required: true, message: '请输入诊室名称' }]}
             >
               <Input placeholder="" />
             </FormItem>
             <FormItem
-              label="科室介绍"
+              label="诊室介绍"
               field="description"
-              rules={[{ required: true, message: '请输入科室介绍' }]}
+              rules={[{ required: true, message: '请输入诊室介绍' }]}
             >
               <Input placeholder="" />
+            </FormItem>
+            <FormItem
+              field="departmentId"
+              label="选择标签"
+              rules={[{ required: true, message: '请给文章选择标签' }]}
+            >
+              <Select placeholder="请给文章选择标签">
+                {departmentsArr.map((item) => (
+                  <Select.Option key={item._id} value={item._id}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </FormItem>
           </Form>
         </Modal>
