@@ -68,8 +68,35 @@ class DoctorController extends Controller {
         type: 'string',
         required: true,
       },
-
-
+      description: {
+        type: 'string',
+        required: false,
+        allowEmpty: true,
+        min: 2,
+        max: 200,
+      },
+      sex: {
+        type: 'string',
+        required: true,
+      },
+      birth: {
+        type: 'number',
+        required: true,
+      },
+      phone: {
+        type: 'string',
+        required: true,
+        format: /^(?:(?:\+|00)86)?1[3-9]\d{9}$/,
+      },
+      IDCard: {
+        type: 'string',
+        required: true,
+        format: /^[1-9]\d{5}(?:18|19|20)\d{2}(?:0[1-9]|10|11|12)(?:0[1-9]|[1-2]\d|30|31)\d{3}[\dXx]$/,
+      },
+      fee: {
+        type: 'string',
+        required: false,
+      },
     };
     this.updateRule = {
     };
@@ -117,6 +144,7 @@ class DoctorController extends Controller {
   async update() {
     const { ctx, service } = this;
     const data = ctx.request.body;
+    ctx.validate(this.createRule, data);
     const id = ctx.params.id;
     const res = await service.doctor.update({
       id,

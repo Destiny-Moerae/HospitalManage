@@ -1,4 +1,4 @@
-import { Form, Input, Button, Space } from '@arco-design/web-react';
+import { Form, Input, Button, Radio } from '@arco-design/web-react';
 import { FormInstance } from '@arco-design/web-react/es/Form';
 import { IconLock, IconUser } from '@arco-design/web-react/icon';
 import React, { useRef, useState } from 'react';
@@ -22,6 +22,7 @@ export default function LoginForm() {
   function afterLoginSuccess(params) {
     // 记录登录状态
     localStorage.setItem('token', params.token);
+    localStorage.setItem('authority', params.authority);
     // 记录用户信息到redux中
     dispatch({
       type: 'LOGIN',
@@ -102,20 +103,15 @@ export default function LoginForm() {
             onPressEnter={onSubmitClick}
           />
         </Form.Item>
-        <Space size={16} direction="vertical">
-          {/* <div className={styles['login-form-password-actions']}>
-            <Checkbox checked={rememberPassword} onChange={setRememberPassword}>
-              记住密码
-            </Checkbox>
-            <Link>忘记密码？</Link>
-          </div> */}
-          <Button type="primary" long onClick={onSubmitClick} loading={loading}>
-            {local['login.login']}
-          </Button>
-          {/* <Button type="text" long className={styles['login-form-register-btn']}>
-            注册账号
-          </Button> */}
-        </Space>
+        <Form.Item field="authority" initialValue={0}>
+          <Radio.Group defaultValue={0}>
+            <Radio value={0}>医生</Radio>
+            <Radio value={1}>管理员</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Button type="primary" long onClick={onSubmitClick} loading={loading}>
+          {local['login.login']}
+        </Button>
       </Form>
     </div>
   );

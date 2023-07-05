@@ -22,7 +22,7 @@ module.exports = {
     surgeryId: {
       type: 'string',
       required: true,
-      example: '64a24096dd86990d81cf8991'
+      example: '64a24096dd86990d81cf8991',
     },
     description: {
       type: 'string',
@@ -37,18 +37,23 @@ module.exports = {
     birth: {
       type: 'number',
       description: '医生出生年月',
-      example: '628358400',
+      example: 628358400,
     },
     phone: {
       type: 'string',
       description: '医生电话',
-      example: '12345678910',
+      example: '19816898450',
+    },
+    IDCard: {
+      type: 'string',
+      description: '医生身份证号',
+      example: '152723198811290093',
     },
     fee: {
-      type: 'number',
+      type: 'string',
       description: '医生挂号费',
       example: '100',
-    }
+    },
   },
   // 更新医生
   updateDoctorRequest: {
@@ -60,7 +65,7 @@ module.exports = {
     fee: {
       type: 'number',
       description: '医生挂号费',
-      example: '80'
-    }
+      example: '80',
+    },
   },
-}
+};

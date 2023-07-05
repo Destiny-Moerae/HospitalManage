@@ -12,7 +12,7 @@ export default () => {
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
-        <Logo />
+        <Logo style={{ width: 32, height: 32 }} />
         <div className={styles['logo-text']}>医院管理系统</div>
       </div>
       <div className={styles.content}>

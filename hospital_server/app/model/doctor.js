@@ -1,6 +1,6 @@
 module.exports = app => {
-  const mongoose = app.mongoose
-  const Schema = mongoose.Schema
+  const mongoose = app.mongoose;
+  const Schema = mongoose.Schema;
 
   const DoctorSchema = new Schema(
     {
@@ -18,7 +18,7 @@ module.exports = app => {
       },
       sex: {
         type: String,
-        default: '暂无',
+        default: '男',
       },
       birth: {
         type: Number,
@@ -26,17 +26,19 @@ module.exports = app => {
       },
       phone: {
         type: String,
-        default: '暂无',
+      },
+      IDCard: {
+        type: String,
       },
       fee: {
         type: Number,
-        default: 0
+        default: 0,
       },
       description: {
         type: String,
         min: 2,
         max: 200,
-        default: "该医生暂无描述"
+        default: '该医生暂无描述',
       },
       surgeryId: {
         type: 'ObjectId',
@@ -56,6 +58,6 @@ module.exports = app => {
       collection: 'doctor',
       versionKey: false,
     }
-  )
-  return mongoose.model('Doctor', DoctorSchema)
-}
+  );
+  return mongoose.model('Doctor', DoctorSchema);
+};

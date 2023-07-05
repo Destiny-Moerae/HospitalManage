@@ -9,8 +9,9 @@ import {
   Menu,
   Space,
   Message,
+  Tag,
 } from '@arco-design/web-react';
-import { IconSunFill, IconMoonFill } from '@arco-design/web-react/icon';
+import { IconSunFill, IconMoonFill, IconUser } from '@arco-design/web-react/icon';
 import { useSelector, useDispatch } from 'react-redux';
 import { ReducerState } from '../../redux';
 import useLocale from '../../utils/useLocale';
@@ -44,10 +45,14 @@ function Navbar() {
       const res: any = await logout();
       if (res.code === 0) {
         localStorage.removeItem('token');
+        localStorage.removeItem('authority');
         localStorage.removeItem('userInfo');
         Message.success(res.msg);
         history.push('/user/login');
       }
+    } else if (key === 'person') {
+      console.log('person', key);
+      history.push('/department');
     }
   };
 
@@ -55,7 +60,7 @@ function Navbar() {
     <div className={styles.navbar}>
       <div className={styles.left}>
         <Space size={8}>
-          <Logo />
+          <Logo style={{ width: 32, height: 32 }} />
           <Typography.Title style={{ margin: 0, fontSize: 18 }} heading={5}>
             医院管理系统
           </Typography.Title>
@@ -104,6 +109,15 @@ function Navbar() {
         </li>
         {userInfo && (
           <li>
+            {localStorage.getItem('authority') === '1' ? (
+              <Tag icon={<IconUser />} color="red" style={{ marginRight: 10 }}>
+                管理员
+              </Tag>
+            ) : (
+              <Tag icon={<IconUser />} color="blue" style={{ marginRight: 10 }}>
+                医生
+              </Tag>
+            )}
             <Avatar
               size={24}
               style={{
@@ -118,7 +132,7 @@ function Navbar() {
               droplist={
                 <div>
                   <Menu onClickMenuItem={onMenuItemClick}>
-                    <Menu.Item key="publish">发布文章</Menu.Item>
+                    <Menu.Item key="person">个人中心</Menu.Item>
                   </Menu>
                   <Menu onClickMenuItem={onMenuItemClick}>
                     <Menu.Item key="logout">退出登录</Menu.Item>

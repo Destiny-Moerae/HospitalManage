@@ -13,5 +13,11 @@ module.exports = {
       description: '密码',
       example: '123456',
     },
+    authority: {
+      type: 'number',
+      required: true,
+      description: '权限',
+      example: 1,
+    },
   },
-}
+};

@@ -74,7 +74,7 @@ class DoctorService extends Service {
       return {
         ...item,
         birth: item.birth * 1000,
-
+        fee: item.fee.toString(),
       };
     });
 
@@ -96,11 +96,11 @@ class DoctorService extends Service {
         code: 1,
       };
     }
+    params.fee = parseInt(params.fee, 10) || 0;
     if (!app.mongoose.Types.ObjectId.isValid(params.surgeryId)) {
       return {
         msg: '诊室不存在',
         code: 1,
-
       };
     }
     const findSurgery = await ctx.model.Surgery.findOne({

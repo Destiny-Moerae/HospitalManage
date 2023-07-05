@@ -20,6 +20,11 @@ class LoginController extends Controller {
         max: 20,
         format: /^[A-Za-z0-9_]{6,20}$/,
       },
+      authority: {
+        type: 'number',
+        required: true,
+        format: /^([0-1])$/,
+      },
     };
   }
 

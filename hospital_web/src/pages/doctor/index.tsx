@@ -77,6 +77,17 @@ function TagsTable() {
       title: '医生姓名',
       dataIndex: 'fullname',
       editable: true,
+      fixed: 'left',
+      width: 120,
+    },
+    {
+      title: '隶属诊室',
+      dataIndex: 'surgeryName',
+    },
+    {
+      title: '出诊费',
+      dataIndex: 'fee',
+      editable: true,
     },
     {
       title: '性别',
@@ -84,23 +95,15 @@ function TagsTable() {
       editable: true,
     },
     {
-      title: '出生日期',
-      dataIndex: 'birth',
-      render: (_, record) => {
-        return record.birth ? dayjs(record.birth).format('YYYY-MM-DD') : '-';
-      },
-    },
-    {
       title: '电话',
       dataIndex: 'phone',
       editable: true,
     },
     {
-      title: '出诊费',
-      dataIndex: 'fee',
+      title: '身份证号',
+      dataIndex: 'IDCard',
       editable: true,
     },
-
     {
       title: '医生介绍',
       dataIndex: 'description',
@@ -117,8 +120,11 @@ function TagsTable() {
       editable: true,
     },
     {
-      title: '隶属诊室',
-      dataIndex: 'surgeryName',
+      title: '出生日期',
+      dataIndex: 'birth',
+      render: (_, record) => {
+        return record.birth ? dayjs(record.birth).format('YYYY-MM-DD') : '-';
+      },
     },
     {
       title: '创建时间',
@@ -141,6 +147,8 @@ function TagsTable() {
     {
       title: locale['searchTable.columns.operations'],
       dataIndex: 'operations',
+      fixed: 'right',
+      width: 140,
       // 这里这个record表示的是当前行的数据
       render: (_, record) => (
         <div className={styles.operations}>
@@ -300,6 +308,10 @@ function TagsTable() {
           onChange={onChangeTable}
           pagination={pagination}
           data={data}
+          scroll={{
+            x: 1600,
+            y: 400,
+          }}
           components={{
             body: {
               row: EditableRow,
@@ -309,7 +321,7 @@ function TagsTable() {
           columns={columns.map((column) =>
             column.editable
               ? {
-                  ...column,
+                  ...(column as any),
                   onCell: () => ({
                     onHandleSave,
                   }),
@@ -343,31 +355,38 @@ function TagsTable() {
             <FormItem
               label="电话"
               field="phone"
-              rules={[{ required: true, message: '请输入性别' }]}
+              rules={[{ required: true, message: '请输入电话号码' }]}
+            >
+              <Input placeholder="" />
+            </FormItem>
+            <FormItem
+              label="身份证号"
+              field="IDCard"
+              rules={[{ required: true, message: '请输入身份证号' }]}
             >
               <Input placeholder="" />
             </FormItem>
             <FormItem
               label="出诊费"
               field="fee"
-              rules={[{ required: true, message: '请输入性别' }]}
+              rules={[{ required: true, message: '请输入出诊费' }]}
             >
               <Input placeholder="" />
             </FormItem>
             <FormItem
               label="医生介绍"
               field="description"
-              rules={[{ required: true, message: '请输入性别' }]}
+              rules={[{ required: true, message: '请输入医生介绍' }]}
             >
               <Input placeholder="" />
             </FormItem>
-            <FormItem label="账号" field="name" rules={[{ required: true, message: '请输入性别' }]}>
+            <FormItem label="账号" field="name" rules={[{ required: true, message: '请输入账号' }]}>
               <Input placeholder="" />
             </FormItem>
             <FormItem
               label="密码"
               field="password"
-              rules={[{ required: true, message: '请输入性别' }]}
+              rules={[{ required: true, message: '请输入密码' }]}
             >
               <Input placeholder="" />
             </FormItem>
