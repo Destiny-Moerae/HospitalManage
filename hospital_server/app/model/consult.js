@@ -1,22 +1,21 @@
 module.exports = app => {
-  const mongoose = app.mongoose
-  const Schema = mongoose.Schema
+  const mongoose = app.mongoose;
+  const Schema = mongoose.Schema;
 
   const ConsultSchema = new Schema(
     {
       date: {
-        type: Number
-
+        type: Number,
       },
       startTime: {
         type: Number,
         min: 0,
-        max: 23
+        max: 23,
       },
       endTime: {
         type: Number,
         min: 0,
-        max: 23
+        max: 23,
       },
       doctorId: {
         type: 'ObjectId',
@@ -36,6 +35,6 @@ module.exports = app => {
       collection: 'consult',
       versionKey: false,
     }
-  )
-  return mongoose.model('Consult', ConsultSchema)
-}
+  );
+  return mongoose.model('Consult', ConsultSchema);
+};

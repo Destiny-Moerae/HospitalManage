@@ -1,9 +1,6 @@
 import React from 'react';
 import {
   IconGift,
-  IconStorage,
-  IconTags,
-  IconQuestionCircle,
   IconUser,
   IconHome,
   IconMobile,
@@ -13,7 +10,6 @@ import {
   // IconHome,
   // IconStar,
   // IconNav,
-  IconBook,
 } from '@arco-design/web-react/icon';
 
 export const defaultRoute = 'welcome';

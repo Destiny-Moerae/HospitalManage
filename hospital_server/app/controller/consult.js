@@ -1,13 +1,13 @@
 /* eslint-disable jsdoc/check-tag-names */
-'use strict'
+'use strict';
 
-const Controller = require('egg').Controller
+const Controller = require('egg').Controller;
 /**
  * @Controller 出诊管理
  */
 class ConsultController extends Controller {
   constructor(ctx) {
-    super(ctx)
+    super(ctx);
 
     this.queryRule = {
       page: {
@@ -27,19 +27,27 @@ class ConsultController extends Controller {
         required: false,
         allowEmpty: true,
       },
-      time: {
-        type: 'number',
+      surgeryId: {
+        type: 'string',
         required: false,
         allowEmpty: true,
-        min: 0,
-        max: 23,
       },
-      date: {
-        type: 'number',
+      departmentId: {
+        type: 'string',
         required: false,
         allowEmpty: true,
-      }
-    }
+      },
+      startDate: {
+        type: 'string',
+        required: false,
+        allowEmpty: true,
+      },
+      endDate: {
+        type: 'string',
+        required: false,
+        allowEmpty: true,
+      },
+    };
 
 
     this.createRule = {
@@ -54,17 +62,12 @@ class ConsultController extends Controller {
       startTime: {
         type: 'string',
         required: true,
-
       },
       endTime: {
         type: 'string',
         required: true,
-
       },
-
-
-
-    }
+    };
 
   }
 
@@ -74,16 +77,18 @@ class ConsultController extends Controller {
    * @router get /api/v1/consult
    * @request query string page 页码
    * @request query string pageSize 每页数量
+   * @request query string surgeryId 诊室id
    * @request query string doctorId 医生id
-   * @request query string date 日期
-   * @request query string time 时间
+   * @request query string departmentId 科室id
+   * @request query string startDate 开始日期
+   * @request query string endDate 结束日期
    */
-  async index () {
-    const { ctx, service } = this
-    const data = ctx.query
-    ctx.validate(this.queryRule, data)
-    const res = await service.consult.index(data)
-    ctx.helper.success({ ctx, res })
+  async index() {
+    const { ctx, service } = this;
+    const data = ctx.query;
+    ctx.validate(this.queryRule, data);
+    const res = await service.consult.index(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -92,13 +97,13 @@ class ConsultController extends Controller {
    * @router post /api/v1/consult
    * @request body createConsultRequest *body
    */
-  async create () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    console.log("controller-data", data)
-    ctx.validate(this.createRule, data)
-    const res = await service.consult.create(data)
-    ctx.helper.success({ ctx, res })
+  async create() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    console.log('controller-data', data);
+    ctx.validate(this.createRule, data);
+    const res = await service.consult.create(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -108,20 +113,17 @@ class ConsultController extends Controller {
    * @request path string *id
    * @request body updateConsultRequest *body
    */
-  async update () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    const id = ctx.params.id
+  async update() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    const id = ctx.params.id;
 
-    ctx.validate(this.createRule, data)
+    ctx.validate(this.createRule, data);
     const res = await service.consult.update({
       id,
-      doctorId: data.doctorId,
-      date: data.date,
-      startTime: data.startTime,
-      endTime: data.endTime,
-    })
-    ctx.helper.success({ ctx, res })
+      ...data,
+    });
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -130,13 +132,13 @@ class ConsultController extends Controller {
    * @router delete /api/v1/consult/{id}
    * @request path string *id
    */
-  async destroy () {
-    const { ctx, service } = this
-    const id = ctx.params.id
-    const res = await service.consult.delete(id)
-    ctx.helper.success({ ctx, res })
+  async destroy() {
+    const { ctx, service } = this;
+    const id = ctx.params.id;
+    const res = await service.consult.delete(id);
+    ctx.helper.success({ ctx, res });
   }
 
 }
 
-module.exports = ConsultController
+module.exports = ConsultController;

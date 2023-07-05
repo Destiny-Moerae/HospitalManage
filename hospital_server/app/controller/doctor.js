@@ -1,13 +1,13 @@
 /* eslint-disable jsdoc/check-tag-names */
-'use strict'
+'use strict';
 
-const Controller = require('egg').Controller
+const Controller = require('egg').Controller;
 /**
  * @Controller 医生管理
  */
 class DoctorController extends Controller {
   constructor(ctx) {
-    super(ctx)
+    super(ctx);
 
     this.queryRule = {
       page: {
@@ -39,8 +39,8 @@ class DoctorController extends Controller {
         type: 'string',
         required: false,
         allowEmpty: true,
-      }
-    }
+      },
+    };
 
 
     this.createRule = {
@@ -70,9 +70,9 @@ class DoctorController extends Controller {
       },
 
 
-    }
+    };
     this.updateRule = {
-    }
+    };
   }
 
   /**
@@ -85,12 +85,12 @@ class DoctorController extends Controller {
    * @request query string surgeryId 诊室id
    * @request query string userId 用户id
    */
-  async index () {
-    const { ctx, service } = this
-    const data = ctx.query
-    ctx.validate(this.queryRule, data)
-    const res = await service.doctor.index(data)
-    ctx.helper.success({ ctx, res })
+  async index() {
+    const { ctx, service } = this;
+    const data = ctx.query;
+    ctx.validate(this.queryRule, data);
+    const res = await service.doctor.index(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -99,12 +99,12 @@ class DoctorController extends Controller {
    * @router post /api/v1/doctor
    * @request body createDoctorRequest *body
    */
-  async create () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    ctx.validate(this.createRule, data)
-    const res = await service.doctor.create(data)
-    ctx.helper.success({ ctx, res })
+  async create() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    ctx.validate(this.createRule, data);
+    const res = await service.doctor.create(data);
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -114,15 +114,15 @@ class DoctorController extends Controller {
    * @request path string *id
    * @request body updateDoctorRequest *body
    */
-  async update () {
-    const { ctx, service } = this
-    const data = ctx.request.body
-    const id = ctx.params.id
+  async update() {
+    const { ctx, service } = this;
+    const data = ctx.request.body;
+    const id = ctx.params.id;
     const res = await service.doctor.update({
       id,
       ...data,
-    })
-    ctx.helper.success({ ctx, res })
+    });
+    ctx.helper.success({ ctx, res });
   }
 
   /**
@@ -131,13 +131,13 @@ class DoctorController extends Controller {
    * @router delete /api/v1/doctor/{id}
    * @request path string *id
    */
-  async destroy () {
-    const { ctx, service } = this
-    const id = ctx.params.id
-    const res = await service.doctor.delete(id)
-    ctx.helper.success({ ctx, res })
+  async destroy() {
+    const { ctx, service } = this;
+    const id = ctx.params.id;
+    const res = await service.doctor.delete(id);
+    ctx.helper.success({ ctx, res });
   }
 
 }
 
-module.exports = DoctorController
+module.exports = DoctorController;

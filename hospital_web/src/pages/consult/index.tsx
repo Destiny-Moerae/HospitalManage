@@ -11,6 +11,9 @@ import {
   Popconfirm,
   DatePicker,
   Select,
+  Grid,
+  Trigger,
+  Typography,
 } from '@arco-design/web-react';
 import { useSelector, useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
@@ -26,11 +29,14 @@ import useLocale from '../../utils/useLocale';
 import { ReducerState } from '../../redux';
 import styles from './style/index.module.less';
 import { getList, create, update, remove } from '../../api/consult';
-import { getList as getDoctorList } from '../../api/doctor';
+import { getList as getDepartmentList } from '../../api/department';
 import { getList as getSurgeryList } from '../../api/surgery';
+import { getList as getDoctorList } from '../../api/doctor';
 import { EditableCell, EditableRow } from './edit';
 
 const FormItem = Form.Item;
+const Row = Grid.Row;
+const Col = Grid.Col;
 
 const formItemLayout = {
   labelCol: {
@@ -45,10 +51,15 @@ function TagsTable() {
   const locale = useLocale();
   // 这里这个form就存储了表单的数据
   const [form] = Form.useForm();
+  const [queryForm] = Form.useForm();
   const dispatch = useDispatch();
   const [title, setTitle] = useState('添加出诊');
+  const [departmentsQueryArr, setdepartmentsQueryArr] = useState([]);
+  const [surgeriesQueryArr, setsurgeriesQueryArr] = useState([]);
+  const [doctorsQueryArr, setdoctorsQueryArr] = useState([]);
   const [doctorsArr, setDoctorsArr] = useState([]);
-  const [surgeriesArr, setSurgeriesArr] = useState([]);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [selectedSurgery, setSelectedSurgery] = useState(null);
   const onUpdate = async (row) => {
     // console.log(row);
     // console.log('update');
@@ -77,12 +88,14 @@ function TagsTable() {
     {
       title: '出诊医生',
       dataIndex: 'doctorName',
-      editable: true,
     },
     {
       title: '诊室名称',
       dataIndex: 'surgeryName',
-      editable: true,
+    },
+    {
+      title: '科室名称',
+      dataIndex: 'departmentName',
     },
     {
       title: '出诊日期',
@@ -155,33 +168,50 @@ function TagsTable() {
 
   const { data, pagination, loading, formParams, visible, confirmLoading } = ConsultState;
 
+  const getQueryDepartments = async () => {
+    const res: any = await getDepartmentList({
+      page: 1,
+      pageSize: 9999,
+    });
+    // console.log('DepartmentRes', res);
+    setdepartmentsQueryArr(res.data.list);
+  };
+
+  const getQuerySurgeries = async () => {
+    const res: any = await getSurgeryList({
+      page: 1,
+      pageSize: 9999,
+      departmentId: selectedDepartment,
+    });
+    // console.log('SurgeryRes', res);
+    setsurgeriesQueryArr(res.data.list);
+  };
+
+  const getQueryDoctors = async () => {
+    const res: any = await getDoctorList({
+      page: 1,
+      pageSize: 9999,
+      surgeryId: selectedSurgery,
+    });
+    // console.log('DoctorRes', res);
+    setdoctorsQueryArr(res.data.list);
+  };
+
   const getDoctors = async () => {
     const res: any = await getDoctorList({
       page: 1,
       pageSize: 9999,
     });
-    console.log('res', res);
     setDoctorsArr(res.data.list);
   };
 
-  const getSurgeries = async () => {
-    const res: any = await getSurgeryList({
-      page: 1,
-      pageSize: 9999,
-    });
-    console.log('res', res);
-    setSurgeriesArr(res.data.list);
-  };
   useEffect(() => {
+    getQueryDepartments();
     getDoctors();
   }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    getSurgeries();
   }, []);
 
   async function fetchData(current = 1, pageSize = 20, params = {}) {
@@ -192,9 +222,9 @@ function TagsTable() {
         pageSize,
         ...params,
       };
-      console.log('postData', postData);
+      // console.log('postData', postData);
       const res: any = await getList(postData);
-      console.log('res', res.data.list);
+      // console.log('res', res.data.list);
       if (res.code === 0) {
         dispatch({ type: UPDATE_LIST, payload: { data: res.data.list } });
         dispatch({
@@ -211,10 +241,23 @@ function TagsTable() {
     const { current, pageSize } = pagination;
     fetchData(current, pageSize, formParams);
   }
-
-  function onSearch(name) {
-    fetchData(1, pagination.pageSize, { name });
-  }
+  const onReset = () => {
+    queryForm.resetFields();
+    setSelectedDepartment(null);
+    setSelectedSurgery(null);
+    fetchData();
+  };
+  const onSearch = async () => {
+    const query = await queryForm.getFields();
+    // console.log('query', query);
+    if (query.date) {
+      query.startDate = dayjs(query.date[0]).unix();
+      query.endDate = dayjs(query.date[1]).unix();
+      delete query.date;
+    }
+    // console.log('query', query);
+    fetchData(1, pagination.pageSize, query);
+  };
 
   const onAdd = () => {
     dispatch({ type: TOGGLE_VISIBLE, payload: { visible: true } });
@@ -250,15 +293,32 @@ function TagsTable() {
     }
   };
 
-  const onHandleSave = async (row) => {
-    const res: any = await update(row);
-    if (res.code === 0) {
-      fetchData();
-      Message.success(res.msg);
-    } else {
-      Message.error('修改失败，请重试');
-    }
+  const Layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
   };
+
+  const handleDepartmentChange = async (value) => {
+    setSelectedDepartment(value);
+    setSelectedSurgery(null);
+    queryForm.resetFields(['surgeryId']);
+    queryForm.resetFields(['doctorId']);
+  };
+  useEffect(() => {
+    if (selectedDepartment) {
+      getQuerySurgeries();
+    }
+  }, [selectedDepartment]);
+
+  const handleSurgeryChange = async (value) => {
+    setSelectedSurgery(value);
+    queryForm.resetFields(['doctorId']);
+  };
+  useEffect(() => {
+    if (selectedSurgery) {
+      getQueryDoctors();
+    }
+  }, [selectedSurgery]);
 
   return (
     <div className={styles.container}>
@@ -272,15 +332,80 @@ function TagsTable() {
               添加出诊
             </Button>
           </div>
-          <div>
-            <Input.Search
-              style={{ width: 300 }}
-              searchButton
-              placeholder="请输入出诊名称"
-              onSearch={onSearch}
-            />
-          </div>
         </div>
+
+        <Form form={queryForm} {...Layout} layout="horizontal" style={{ marginBottom: -10 }}>
+          <Row>
+            <Col span={8}>
+              <FormItem field="departmentId" label="科室">
+                <Select placeholder="请选择科室" onChange={handleDepartmentChange}>
+                  {departmentsQueryArr.map((item) => (
+                    <Select.Option key={item._id} value={item._id}>
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </FormItem>
+            </Col>
+            {selectedDepartment && (
+              <Col span={8}>
+                <FormItem field="surgeryId" label="诊室">
+                  <Select placeholder="请选择诊室" onChange={handleSurgeryChange}>
+                    {surgeriesQueryArr.map((item) => (
+                      <Select.Option key={item._id} value={item._id}>
+                        {item.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </FormItem>
+              </Col>
+            )}
+            {selectedSurgery && (
+              <Col span={8}>
+                <FormItem field="doctorId" label="医生">
+                  <Select placeholder="请选择医生">
+                    {doctorsQueryArr.map((item) => (
+                      <Select.Option key={item._id} value={item._id}>
+                        {item.fullname}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </FormItem>
+              </Col>
+            )}
+          </Row>
+          <Row>
+            <Col span={8}>
+              <FormItem field="date" label="出诊日期">
+                <DatePicker.RangePicker showTime format="YYYY-MM-DD" />
+              </FormItem>
+            </Col>
+            <Col span={8} />
+            <Col span={6} offset={2}>
+              <FormItem className={styles['search-btns']}>
+                <div className={styles['search-btns-group']}>
+                  <Trigger
+                    popup={() => (
+                      <Typography.Paragraph className={styles['trigger-popup']}>
+                        重置
+                      </Typography.Paragraph>
+                    )}
+                    showArrow
+                    trigger="hover"
+                  >
+                    <Button onClick={onReset} style={{ marginRight: 10, marginBottom: 10 }}>
+                      重置
+                    </Button>
+                  </Trigger>
+                  <Button onClick={onSearch} type="primary">
+                    搜索
+                  </Button>
+                </div>
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
+
         <Table
           rowKey="_id"
           loading={loading}
@@ -293,16 +418,7 @@ function TagsTable() {
               cell: EditableCell,
             },
           }}
-          columns={columns.map((column) =>
-            column.editable
-              ? {
-                  ...column,
-                  onCell: () => ({
-                    onHandleSave,
-                  }),
-                }
-              : column
-          )}
+          columns={columns}
           className={styles['table-demo-editable-cell']}
         />
 
@@ -331,16 +447,16 @@ function TagsTable() {
               <DatePicker />
             </FormItem>
             <FormItem
-              label="开始时间"
+              label="开始日期"
               field="startTime"
-              rules={[{ required: true, message: '请输入开始时间' }]}
+              rules={[{ required: true, message: '请填入开始日期' }]}
             >
               <Input placeholder="" />
             </FormItem>
             <FormItem
-              label="结束时间"
+              label="结束日期"
               field="endTime"
-              rules={[{ required: true, message: '请输入结束时间' }]}
+              rules={[{ required: true, message: '请填入结束日期' }]}
             >
               <Input placeholder="" />
             </FormItem>
