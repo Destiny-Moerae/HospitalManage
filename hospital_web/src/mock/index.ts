@@ -15,6 +15,7 @@
 // import '../pages/department/mock';
 // import '../pages/surgery/mock';
 // import '../pages/doctor/mock';
+// import '../pages/consult/mock';
 
 // Mock.setup({
 //   timeout: '200-600',

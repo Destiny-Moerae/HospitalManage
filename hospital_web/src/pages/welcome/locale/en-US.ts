@@ -3,6 +3,7 @@ export default {
   'menu.department': 'Department',
   'menu.surgery': 'Surgery',
   'menu.doctor': 'Doctor',
+  'menu.consult': 'Consult',
   'menu.user': 'User',
   'menu.comment': 'Comment',
   'menu.site.headerFooter': 'HeaderFooter',

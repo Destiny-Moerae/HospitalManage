@@ -11,6 +11,7 @@ class ConsultService extends Service {
     if (params.doctorId && !app.mongoose.Types.ObjectId.isValid(params.doctorId)) {
       return {
         msg: '参数错误',
+        code: 1
       }
     }
     const necessaryCon = {
@@ -65,7 +66,7 @@ class ConsultService extends Service {
       },
       {
         $addFields: {
-          doctorName: { $arrayElemAt: ['$doctor.name', 0] },
+          doctorName: { $arrayElemAt: ['$doctor.fullname', 0] },
         },
       },
       {
@@ -84,37 +85,71 @@ class ConsultService extends Service {
       {
         $project: {
           doctor: 0,
-          doctorId: 0,
+
           surgery: 0
         }
       }
     ])
+
     const [totalCount, list] = await Promise.all([countPromise, listPromise])
+    const modifiedList = list.map(item => {
+      return {
+        ...item,
+        date: item.date * 1000,
+        startTime: item.startTime.toString(),
+        endTime: item.endTime.toString()
+      }
+    })
     return {
       data: {
         page,
         pageSize,
         totalCount,
-        list,
+        list: modifiedList
       },
     }
   }
 
   async create (params) {
     const { ctx } = this
+    params.startTime = parseInt(params.startTime, 10) || -1
+    params.endTime = parseInt(params.endTime, 10) || -1
+    if (params.startTime === -1 || params.endTime === -1) {
+      return {
+        msg: '时间错误',
+        code: 1
+      }
+    }
+    if (params.startTime < 0 || params.startTime > 23 || params.endTime < 0 || params.endTime > 23) {
+      return {
+        msg: '时间错误',
+        code: 1
+      }
+    }
+    if (params.startTime >= params.endTime) {
+      return {
+        msg: '时间错误',
+        code: 1
+      }
+    }
     if (!params.doctorId) {
       return {
         msg: '缺少医生id',
+        code: 1
       }
     }
     const findDoctor = await ctx.model.Doctor.findOne({ _id: params.doctorId })
     if (!findDoctor) {
       return {
         msg: '医生不存在',
+        code: 1
       }
     }
     // console.log("params-service", params)
-    const findItems = await ctx.model.Consult.find({ doctorId: params.doctorId })
+    const findItems = await ctx.model.Consult.find({
+      _id: { $ne: params.id },
+      doctorId: params.doctorId
+    })
 
     // console.log("findItems", findItems)
     const newItem = {
@@ -131,19 +166,20 @@ class ConsultService extends Service {
         const findItem = findItems[i]
 
         if (
-          findItem.date === params.date &&
-          findItem.endTime > params.startTime &&
-          findItem.startTime < params.endTime
+          findItem.date !== params.date ||
+          params.endTime <= findItem.startTime ||
+          params.startTime >= findItem.endTime
         ) {
           // 发现时间冲突
+          continue
+        }
+        else {
           isConflict = true
           break
         }
       }
 
       if (!isConflict) {
-
-
         const res = await ctx.model.Consult.create(newItem)
         return {
           msg: '出诊添加成功',
@@ -152,6 +188,7 @@ class ConsultService extends Service {
       } else {
         return {
           msg: '出诊时间冲突',
+          code: 1
         }
       }
     }
@@ -165,39 +202,81 @@ class ConsultService extends Service {
 
   async update (params) {
     const { ctx, app } = this
+    params.startTime = parseInt(params.startTime, 10) || -1
+    params.endTime = parseInt(params.endTime, 10) || -1
+    if (params.startTime === -1 || params.endTime === -1) {
+      return {
+        msg: '时间错误',
+        code: 1
+      }
+    }
+    if (params.startTime < 0 || params.startTime > 23 || params.endTime < 0 || params.endTime > 23) {
+      return {
+        msg: '时间错误',
+        code: 1
+      }
+    }
+    if (params.startTime >= params.endTime) {
+      return {
+        msg: '时间错误',
+        code: 1
+      }
+    }
     if (!app.mongoose.Types.ObjectId.isValid(params.id)) {
       return {
         msg: '出诊不存在',
+        code: 1
       }
     }
-    const findItem = await ctx.model.Consult.findOne({
+    const item = await ctx.model.Consult.findOne({
       _id: params.id,
     })
-    if (!findItem) {
+    if (!item) {
       return {
         msg: '出诊不存在',
+        code: 1
       }
     }
 
-    const conflictingSurgery = await ctx.model.Surgery.findOne({
+
+
+    const isConflict = await ctx.model.Consult.findOne({
       _id: { $ne: params.id },
       doctorId: params.doctorId,
-      $or: [
-        {
-          startTime: { $lt: params.endTime },
-          endTime: { $gt: params.startTime }
-        },
-        {
-          startTime: { $eq: params.startTime },
-          endTime: { $eq: params.endTime }
-        }
-      ]
+      endTime: { $gt: params.startTime },
+      startTime: { $lt: params.endTime }
+
     })
 
-    if (conflictingSurgery) {
+    // const findItems = await ctx.model.Consult.find({
+    //   _id: { $ne: params.id },
+    //   doctorId: params.doctorId
+    // })
+    // if (findItems.length > 0) {
+    //   let isConflict = false
+
+    //   for (let i = 0; i < findItems.length; i++) {
+    //     const findItem = findItems[i]
+
+    //     if (
+    //       findItem.date !== params.date ||
+    //       params.endTime <= findItem.startTime ||
+    //       params.startTime >= findItem.endTime
+    //     ) {
+    //       // 发现时间冲突
+    //       continue
+    //     }
+    //     else {
+    //       isConflict = true
+    //       break
+    //     }
+    //   }
+
+    if (isConflict) {
       // 时间冲突处理逻辑
       return {
-        msg: "时间冲突"
+        msg: "时间冲突",
+        code: 1
       }
     } else {
       // 修改出诊时间
@@ -214,14 +293,13 @@ class ConsultService extends Service {
         // console.log(err);
         return {
           msg: '出诊修改失败',
+          code: 1
         }
       }
       return {
         msg: '出诊修改成功',
       }
     }
-
-
   }
 
   async delete (id) {
@@ -229,6 +307,7 @@ class ConsultService extends Service {
     if (!app.mongoose.Types.ObjectId.isValid(id)) {
       return {
         msg: '出诊不存在',
+        code: 1
       }
     }
     const delItem = await ctx.model.Consult.findOne({
@@ -237,6 +316,7 @@ class ConsultService extends Service {
     if (!delItem) {
       return {
         msg: '出诊不存在',
+        code: 1
       }
     }
 
@@ -248,6 +328,7 @@ class ConsultService extends Service {
     } catch (err) {
       return {
         msg: '出诊删除失败',
+        code: 1
       }
     }
     return {

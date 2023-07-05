@@ -42,6 +42,7 @@ class DepartmentService extends Service {
     if (findItem) {
       return {
         msg: '科室已存在',
+        code: 1
       }
     }
     const newItem = {
@@ -69,6 +70,7 @@ class DepartmentService extends Service {
     if (!findItem) {
       return {
         msg: '科室不存在',
+        code: 1
       }
     }
 
@@ -79,6 +81,7 @@ class DepartmentService extends Service {
     if (duplicateName) {
       return {
         msg: '科室已存在，请重新修改',
+        code: 1
       }
     }
 
@@ -96,6 +99,7 @@ class DepartmentService extends Service {
       // console.log(err);
       return {
         msg: '科室修改失败',
+        code: 1
       }
     }
     return {
@@ -108,6 +112,7 @@ class DepartmentService extends Service {
     if (!app.mongoose.Types.ObjectId.isValid(id)) {
       return {
         msg: '科室不存在',
+        code: 1
       }
     }
     const delItem = await ctx.model.Department.findOne({
@@ -116,6 +121,7 @@ class DepartmentService extends Service {
     if (!delItem) {
       return {
         msg: '科室不存在',
+        code: 1
       }
     }
     //在删除科室之前，先检查该科室下是否有诊室
@@ -125,6 +131,7 @@ class DepartmentService extends Service {
     if (surgeryList.length > 0) {
       return {
         msg: '该科室下存在诊室，无法删除',
+        code: 1
       }
     }
     try {
@@ -134,6 +141,7 @@ class DepartmentService extends Service {
     } catch (err) {
       return {
         msg: '科室删除失败',
+        code: 1
       }
     }
     return {

@@ -3,6 +3,7 @@ export default {
   'menu.department': '科室管理',
   'menu.surgery': '诊室管理',
   'menu.doctor': '医生管理',
+  'menu.consult': '出诊管理',
   'menu.user': '用户管理',
   'menu.comment': '评论管理',
   'menu.site.headerFooter': '页头页脚配置',

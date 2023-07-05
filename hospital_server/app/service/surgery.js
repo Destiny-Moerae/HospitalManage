@@ -11,6 +11,7 @@ class SurgeryService extends Service {
     if (params.departmentId && !app.mongoose.Types.ObjectId.isValid(params.departmentId)) {
       return {
         msg: '参数错误',
+        code: 1
       }
     }
     const necessaryCon = {
@@ -78,11 +79,13 @@ class SurgeryService extends Service {
     if (findItem) {
       return {
         msg: '诊室已存在',
+        code: 1
       }
     }
     if (!params.departmentId) {
       return {
         msg: '缺少科室id',
+        code: 1
       }
     }
     const findDepartment = await ctx.model.Department.findOne({
@@ -91,6 +94,7 @@ class SurgeryService extends Service {
     if (!findDepartment) {
       return {
         msg: '科室不存在',
+        code: 1
       }
     }
 
@@ -112,6 +116,7 @@ class SurgeryService extends Service {
     if (!app.mongoose.Types.ObjectId.isValid(params.id)) {
       return {
         msg: '诊室不存在',
+        code: 1
       }
     }
     const findItem = await ctx.model.Surgery.findOne({
@@ -120,6 +125,7 @@ class SurgeryService extends Service {
     if (!findItem) {
       return {
         msg: '诊室不存在',
+        code: 1
       }
     }
 
@@ -130,6 +136,7 @@ class SurgeryService extends Service {
     if (duplicateName) {
       return {
         msg: '诊室已存在，请重新修改',
+        code: 1
       }
     }
 
@@ -147,6 +154,7 @@ class SurgeryService extends Service {
       // console.log(err);
       return {
         msg: '诊室修改失败',
+        code: 1
       }
     }
     return {
@@ -159,6 +167,7 @@ class SurgeryService extends Service {
     if (!app.mongoose.Types.ObjectId.isValid(id)) {
       return {
         msg: '诊室不存在',
+        code: 1
       }
     }
     const delItem = await ctx.model.Surgery.findOne({
@@ -167,6 +176,7 @@ class SurgeryService extends Service {
     if (!delItem) {
       return {
         msg: '诊室不存在',
+        code: 1
       }
     }
     //在删除前诊室是否有医生
@@ -176,6 +186,7 @@ class SurgeryService extends Service {
     if (doctorList.length > 0) {
       return {
         msg: '该诊室下有医生，不能删除',
+        code: 1
       }
     }
     try {
@@ -186,6 +197,7 @@ class SurgeryService extends Service {
     } catch (err) {
       return {
         msg: '诊室删除失败',
+        code: 1
       }
     }
     return {

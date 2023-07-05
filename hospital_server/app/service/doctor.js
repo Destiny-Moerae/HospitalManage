@@ -78,26 +78,38 @@ class DoctorService extends Service {
     //   .lean()
     //   .exec()
     const [totalCount, list] = await Promise.all([countPromise, listPromise])
+
+    const modifiedList = list.map(item => {
+      return {
+        ...item,
+        birth: item.birth * 1000,
+
+      }
+    })
+
     return {
       data: {
         page,
         pageSize,
         totalCount,
-        list,
-      },
+        list: modifiedList
+      }
     }
   }
 
   async create (params) {
-    const { ctx } = this
+    const { ctx, app } = this
     if (!params.surgeryId) {
       return {
         msg: '缺少诊室id',
+        code: 1
       }
     }
     if (!app.mongoose.Types.ObjectId.isValid(params.surgeryId)) {
       return {
         msg: '诊室不存在',
+        code: 1
+
       }
     }
     const findSurgery = await ctx.model.Surgery.findOne({
@@ -106,6 +118,7 @@ class DoctorService extends Service {
     if (!findSurgery) {
       return {
         msg: '诊室不存在',
+        code: 1
       }
     }
 
@@ -133,6 +146,7 @@ class DoctorService extends Service {
     if (!app.mongoose.Types.ObjectId.isValid(params.id)) {
       return {
         msg: '医生不存在',
+        code: 1
       }
     }
     const findItem = await ctx.model.Doctor.findOne({
@@ -141,6 +155,7 @@ class DoctorService extends Service {
     if (!findItem) {
       return {
         msg: '医生不存在',
+        code: 1
       }
     }
 
@@ -160,6 +175,7 @@ class DoctorService extends Service {
     if (!app.mongoose.Types.ObjectId.isValid(params.surgeryId)) {
       return {
         msg: '诊室不存在',
+        code: 1
       }
     }
     const findSurgery = await ctx.model.Surgery.findOne({
@@ -168,8 +184,11 @@ class DoctorService extends Service {
     if (!findSurgery) {
       return {
         msg: '诊室不存在',
+        code: 1
       }
     }
+
+
     const updateFields = {
       ...params,
       updateTime: ctx.helper.moment(),
@@ -186,10 +205,11 @@ class DoctorService extends Service {
         name: params.name,
         password: params.password,
       })
-    } catch (err) {
 
+    } catch (err) {
       return {
         msg: '医生修改失败',
+        code: 1,
       }
     }
     return {
@@ -202,6 +222,7 @@ class DoctorService extends Service {
     if (!app.mongoose.Types.ObjectId.isValid(id)) {
       return {
         msg: '医生不存在',
+        code: 1
       }
     }
     const delItem = await ctx.model.Doctor.findOne({
@@ -210,6 +231,7 @@ class DoctorService extends Service {
     if (!delItem) {
       return {
         msg: '医生不存在',
+        code: 1
       }
     }
     //删除医生前先要检查该医生是否有未完成的出诊
@@ -219,6 +241,7 @@ class DoctorService extends Service {
     if (consultList.length > 0) {
       return {
         msg: '该医生有未完成的出诊，无法删除',
+        code: 1
       }
     }
 
@@ -233,6 +256,7 @@ class DoctorService extends Service {
     } catch (err) {
       return {
         msg: '医生删除失败',
+        code: 1
       }
     }
     return {

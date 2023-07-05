@@ -52,16 +52,14 @@ class ConsultController extends Controller {
         required: true,
       },
       startTime: {
-        type: 'number',
+        type: 'string',
         required: true,
-        min: 0,
-        max: 23,
+
       },
       endTime: {
-        type: 'number',
+        type: 'string',
         required: true,
-        min: 0,
-        max: 23,
+
       },
 
 
@@ -114,6 +112,7 @@ class ConsultController extends Controller {
     const { ctx, service } = this
     const data = ctx.request.body
     const id = ctx.params.id
+
     ctx.validate(this.createRule, data)
     const res = await service.consult.update({
       id,

@@ -9,8 +9,8 @@ import {
   Form,
   Message,
   Popconfirm,
-  Select,
   DatePicker,
+  Select,
 } from '@arco-design/web-react';
 import { useSelector, useDispatch } from 'react-redux';
 import dayjs from 'dayjs';
@@ -25,7 +25,8 @@ import {
 import useLocale from '../../utils/useLocale';
 import { ReducerState } from '../../redux';
 import styles from './style/index.module.less';
-import { getList, create, update, remove } from '../../api/doctor';
+import { getList, create, update, remove } from '../../api/consult';
+import { getList as getDoctorList } from '../../api/doctor';
 import { getList as getSurgeryList } from '../../api/surgery';
 import { EditableCell, EditableRow } from './edit';
 
@@ -45,15 +46,15 @@ function TagsTable() {
   // 这里这个form就存储了表单的数据
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const [title, setTitle] = useState('添加医生');
+  const [title, setTitle] = useState('添加出诊');
+  const [doctorsArr, setDoctorsArr] = useState([]);
   const [surgeriesArr, setSurgeriesArr] = useState([]);
-
   const onUpdate = async (row) => {
     // console.log(row);
     // console.log('update');
     dispatch({ type: TOGGLE_VISIBLE, payload: { visible: true } });
     form.setFieldsValue(row);
-    setTitle('修改医生');
+    setTitle('修改出诊');
   };
 
   const onDelete = async (row) => {
@@ -74,51 +75,29 @@ function TagsTable() {
       render: (_, __, index) => index + 1,
     },
     {
-      title: '医生姓名',
-      dataIndex: 'fullname',
+      title: '出诊医生',
+      dataIndex: 'doctorName',
       editable: true,
     },
     {
-      title: '性别',
-      dataIndex: 'sex',
+      title: '诊室名称',
+      dataIndex: 'surgeryName',
       editable: true,
     },
     {
-      title: '出生日期',
-      dataIndex: 'birth',
+      title: '出诊日期',
+      dataIndex: 'date',
       render: (_, record) => {
-        return record.birth ? dayjs(record.birth).format('YYYY-MM-DD') : '-';
+        return record.date ? dayjs(record.date).format('YYYY-MM-DD') : '-';
       },
     },
     {
-      title: '电话',
-      dataIndex: 'phone',
-      editable: true,
+      title: '开始时间',
+      dataIndex: 'startTime',
     },
     {
-      title: '出诊费',
-      dataIndex: 'fee',
-      editable: true,
-    },
-
-    {
-      title: '医生介绍',
-      dataIndex: 'description',
-      editable: true,
-    },
-    {
-      title: '账号',
-      dataIndex: 'name',
-      editable: true,
-    },
-    {
-      title: '密码',
-      dataIndex: 'password',
-      editable: true,
-    },
-    {
-      title: '隶属诊室',
-      dataIndex: 'surgeryName',
+      title: '结束时间',
+      dataIndex: 'endTime',
     },
     {
       title: '创建时间',
@@ -172,9 +151,18 @@ function TagsTable() {
     },
   ];
 
-  const DoctorState = useSelector((state: ReducerState) => state.doctor);
+  const ConsultState = useSelector((state: ReducerState) => state.consult);
 
-  const { data, pagination, loading, formParams, visible, confirmLoading } = DoctorState;
+  const { data, pagination, loading, formParams, visible, confirmLoading } = ConsultState;
+
+  const getDoctors = async () => {
+    const res: any = await getDoctorList({
+      page: 1,
+      pageSize: 9999,
+    });
+    console.log('res', res);
+    setDoctorsArr(res.data.list);
+  };
 
   const getSurgeries = async () => {
     const res: any = await getSurgeryList({
@@ -184,13 +172,16 @@ function TagsTable() {
     console.log('res', res);
     setSurgeriesArr(res.data.list);
   };
-
   useEffect(() => {
-    getSurgeries();
+    getDoctors();
   }, []);
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    getSurgeries();
   }, []);
 
   async function fetchData(current = 1, pageSize = 20, params = {}) {
@@ -235,8 +226,8 @@ function TagsTable() {
   const onOk = async () => {
     await form.validate();
     const data = form.getFields();
-    console.log('data', data);
-    data.birth = dayjs(data.birth).unix();
+    // console.log('data', data);
+    data.date = dayjs(data.date).unix();
     let func = create;
     if (data._id) {
       func = update;
@@ -256,10 +247,6 @@ function TagsTable() {
       Message.success(res.msg);
     } else {
       Message.error('添加失败，请重试');
-      dispatch({
-        type: TOGGLE_CONFIRM_LOADING,
-        payload: { confirmLoading: false },
-      });
     }
   };
 
@@ -276,20 +263,20 @@ function TagsTable() {
   return (
     <div className={styles.container}>
       <Breadcrumb style={{ marginBottom: 20 }}>
-        <Breadcrumb.Item>医生管理</Breadcrumb.Item>
+        <Breadcrumb.Item>出诊管理</Breadcrumb.Item>
       </Breadcrumb>
       <Card bordered={false}>
         <div className={styles.toolbar}>
           <div>
             <Button onClick={onAdd} type="primary">
-              添加医生
+              添加出诊
             </Button>
           </div>
           <div>
             <Input.Search
               style={{ width: 300 }}
               searchButton
-              placeholder="请输入医生名称"
+              placeholder="请输入出诊名称"
               onSearch={onSearch}
             />
           </div>
@@ -328,61 +315,34 @@ function TagsTable() {
         >
           <Form {...formItemLayout} form={form}>
             <FormItem
-              label="医生名称"
-              field="fullname"
-              rules={[{ required: true, message: '请输入医生名称' }]}
+              field="doctorId"
+              label="出诊医生"
+              rules={[{ required: true, message: '请选择出诊医生' }]}
             >
-              <Input placeholder="" />
-            </FormItem>
-            <FormItem label="性别" field="sex" rules={[{ required: true, message: '请输入性别' }]}>
-              <Input placeholder="" />
-            </FormItem>
-            <FormItem label="出生日期" field="birth" rules={[{ required: true }]}>
-              <DatePicker />
-            </FormItem>
-            <FormItem
-              label="电话"
-              field="phone"
-              rules={[{ required: true, message: '请输入性别' }]}
-            >
-              <Input placeholder="" />
-            </FormItem>
-            <FormItem
-              label="出诊费"
-              field="fee"
-              rules={[{ required: true, message: '请输入性别' }]}
-            >
-              <Input placeholder="" />
-            </FormItem>
-            <FormItem
-              label="医生介绍"
-              field="description"
-              rules={[{ required: true, message: '请输入性别' }]}
-            >
-              <Input placeholder="" />
-            </FormItem>
-            <FormItem label="账号" field="name" rules={[{ required: true, message: '请输入性别' }]}>
-              <Input placeholder="" />
-            </FormItem>
-            <FormItem
-              label="密码"
-              field="password"
-              rules={[{ required: true, message: '请输入性别' }]}
-            >
-              <Input placeholder="" />
-            </FormItem>
-            <FormItem
-              field="surgeryId"
-              label="隶属诊室"
-              rules={[{ required: true, message: '请选择隶属诊室' }]}
-            >
-              <Select placeholder="请选择隶属诊室">
-                {surgeriesArr.map((item) => (
+              <Select placeholder="请选择出诊医生">
+                {doctorsArr.map((item) => (
                   <Select.Option key={item._id} value={item._id}>
-                    {item.name}
+                    {item.fullname}
                   </Select.Option>
                 ))}
               </Select>
+            </FormItem>
+            <FormItem label="出诊日期" field="date" rules={[{ required: true }]}>
+              <DatePicker />
+            </FormItem>
+            <FormItem
+              label="开始时间"
+              field="startTime"
+              rules={[{ required: true, message: '请输入开始时间' }]}
+            >
+              <Input placeholder="" />
+            </FormItem>
+            <FormItem
+              label="结束时间"
+              field="endTime"
+              rules={[{ required: true, message: '请输入结束时间' }]}
+            >
+              <Input placeholder="" />
             </FormItem>
           </Form>
         </Modal>
