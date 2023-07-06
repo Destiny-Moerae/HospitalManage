@@ -332,11 +332,11 @@ function ConsultsTable() {
       </Breadcrumb>
       <Card bordered={false}>
         <div className={styles.toolbar}>
-          <div>
-            <Button onClick={onAdd} type="primary" disabled={!authority}>
+          {authority ? (
+            <Button onClick={onAdd} type="primary">
               添加出诊
             </Button>
-          </div>
+          ) : null}
         </div>
 
         <Form form={queryForm} {...Layout} layout="horizontal" style={{ marginBottom: -10 }}>

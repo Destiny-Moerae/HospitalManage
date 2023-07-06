@@ -227,9 +227,11 @@ function DepartmentsTable() {
       <Card bordered={false}>
         <div className={styles.toolbar}>
           <div>
-            <Button onClick={onAdd} type="primary" disabled={!authority}>
-              添加科室
-            </Button>
+            {authority ? (
+              <Button onClick={onAdd} type="primary">
+                添加科室
+              </Button>
+            ) : null}
           </div>
           <div>
             <Input.Search

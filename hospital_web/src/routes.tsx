@@ -5,6 +5,7 @@ import {
   IconMobile,
   IconFolderAdd,
   IconUserGroup,
+  IconUser,
   // IconMessage,
   // IconSettings,
   // IconHome,
@@ -23,6 +24,13 @@ export const routes = [
     key: 'welcome',
     icon: <IconGift />,
     componentPath: 'welcome',
+  },
+  {
+    name: 'menu.user',
+    key: 'user',
+    icon: <IconUser />,
+    componentPath: 'user',
+    authority: 999,
   },
   {
     name: 'menu.department',
