@@ -56,6 +56,7 @@ class departmentController extends Controller {
    * @request query string page 页码
    * @request query string pageSize 每页数量
    * @request query string name 科室名称
+   * @Jwt
    */
   async index() {
     const { ctx, service } = this;
@@ -71,6 +72,7 @@ class departmentController extends Controller {
    * @description 创建科室
    * @router post /api/v1/department
    * @request body createDepartmentRequest *body
+   * @Jwt
    */
   async create() {
     const { ctx, service } = this;
@@ -86,6 +88,7 @@ class departmentController extends Controller {
    * @router put /api/v1/department/{id}
    * @request path string *id
    * @request body updateDepartmentRequest *body
+   * @Jwt
    */
   async update() {
     const { ctx, service } = this;
@@ -104,6 +107,7 @@ class departmentController extends Controller {
    * @description 删除科室
    * @router delete /api/v1/department/{id}
    * @request path string *id
+   * @Jwt
    */
   async destroy() {
     const { ctx, service } = this;

@@ -57,7 +57,8 @@ function renderRoutes(locale) {
         if (level > 1) {
           return <MenuItem key={route.key}>{titleDom}</MenuItem>;
         }
-        if (!route.hide || authority) {
+        console.log('route.authority', route.authority, authority, route.authority >= authority);
+        if (!route.authority || authority >= route.authority) {
           nodes.push(
             <MenuItem key={route.key}>
               <Link to={`/${route.key}`}>{titleDom}</Link>

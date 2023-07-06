@@ -55,6 +55,8 @@ function Navbar() {
     }
   };
 
+  const authority = useSelector((state: ReducerState) => state.login.userInfo.authority);
+
   return (
     <div className={styles.navbar}>
       <div className={styles.left}>
@@ -108,7 +110,7 @@ function Navbar() {
         </li>
         {userInfo && (
           <li>
-            {localStorage.getItem('authority') === '1' ? (
+            {authority ? (
               <Tag icon={<IconUser />} color="red" style={{ marginRight: 10 }}>
                 管理员
               </Tag>

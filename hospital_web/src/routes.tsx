@@ -41,7 +41,8 @@ export const routes = [
     key: 'doctor',
     icon: <IconUserGroup />,
     componentPath: 'doctor',
-    hide: true,
+    // hide: true,
+    authority: 1,
   },
   {
     name: 'menu.consult',

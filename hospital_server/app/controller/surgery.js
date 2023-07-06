@@ -66,6 +66,7 @@ class surgeryController extends Controller {
    * @request query string pageSize 每页数量
    * @request query string name 诊室名称
    * @request query string departmentId 科室id
+   * @Jwt
    */
   async index() {
     const { ctx, service } = this;
@@ -80,6 +81,7 @@ class surgeryController extends Controller {
    * @description 创建诊室
    * @router post /api/v1/surgery
    * @request body createSurgeryRequest *body
+   * @Jwt
    */
   async create() {
     const { ctx, service } = this;
@@ -95,6 +97,7 @@ class surgeryController extends Controller {
    * @router put /api/v1/surgery/{id}
    * @request path string *id
    * @request body updateSurgeryRequest *body
+   * @Jwt
    */
   async update() {
     const { ctx, service } = this;
@@ -113,6 +116,7 @@ class surgeryController extends Controller {
    * @description 删除诊室
    * @router delete /api/v1/surgery/{id}
    * @request path string *id
+   * @Jwt
    */
   async destroy() {
     const { ctx, service } = this;

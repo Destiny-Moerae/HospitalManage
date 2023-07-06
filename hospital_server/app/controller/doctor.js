@@ -111,6 +111,7 @@ class DoctorController extends Controller {
    * @request query string fullname 医生名称
    * @request query string surgeryId 诊室id
    * @request query string userId 用户id
+   * @Jwt
    */
   async index() {
     const { ctx, service } = this;
@@ -125,6 +126,7 @@ class DoctorController extends Controller {
    * @description 创建医生
    * @router post /api/v1/doctor
    * @request body createDoctorRequest *body
+   * @Jwt
    */
   async create() {
     const { ctx, service } = this;
@@ -140,6 +142,7 @@ class DoctorController extends Controller {
    * @router put /api/v1/doctor/{id}
    * @request path string *id
    * @request body updateDoctorRequest *body
+   * @Jwt
    */
   async update() {
     const { ctx, service } = this;
@@ -158,6 +161,7 @@ class DoctorController extends Controller {
    * @description 删除医生
    * @router delete /api/v1/doctor/{id}
    * @request path string *id
+   * @Jwt
    */
   async destroy() {
     const { ctx, service } = this;

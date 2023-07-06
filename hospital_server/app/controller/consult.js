@@ -82,6 +82,7 @@ class ConsultController extends Controller {
    * @request query string departmentId 科室id
    * @request query string startDate 开始日期
    * @request query string endDate 结束日期
+   * @Jwt
    */
   async index() {
     const { ctx, service } = this;
@@ -96,6 +97,7 @@ class ConsultController extends Controller {
    * @description 创建出诊
    * @router post /api/v1/consult
    * @request body createConsultRequest *body
+   * @Jwt
    */
   async create() {
     const { ctx, service } = this;
@@ -112,6 +114,7 @@ class ConsultController extends Controller {
    * @router put /api/v1/consult/{id}
    * @request path string *id
    * @request body updateConsultRequest *body
+   * @Jwt
    */
   async update() {
     const { ctx, service } = this;
@@ -131,6 +134,7 @@ class ConsultController extends Controller {
    * @description 删除出诊
    * @router delete /api/v1/consult/{id}
    * @request path string *id
+   * @Jwt
    */
   async destroy() {
     const { ctx, service } = this;
