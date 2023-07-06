@@ -45,13 +45,12 @@ function Navbar() {
       const res: any = await logout();
       if (res.code === 0) {
         localStorage.removeItem('token');
-        localStorage.removeItem('authority');
         localStorage.removeItem('userInfo');
         Message.success(res.msg);
         history.push('/user/login');
       }
     } else if (key === 'person') {
-      console.log('person', key);
+      // console.log('person', key);
       history.push('/department');
     }
   };

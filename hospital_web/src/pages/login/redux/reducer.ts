@@ -8,6 +8,7 @@ export interface UserLoginState {
   userInfo?: {
     name: string;
     avatar: string;
+    authority: number;
   };
 }
 

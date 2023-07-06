@@ -40,7 +40,7 @@ const formItemLayout = {
   },
 };
 
-function TagsTable() {
+function DoctorsTable() {
   const locale = useLocale();
   // 这里这个form就存储了表单的数据
   const [form] = Form.useForm();
@@ -410,4 +410,4 @@ function TagsTable() {
   );
 }
 
-export default TagsTable;
+export default DoctorsTable;

@@ -40,6 +40,8 @@ function getFlattenRoutes() {
 }
 
 function renderRoutes(locale) {
+  // 从redux中获取当前用户的权限
+  const authority = useSelector((state: ReducerState) => state.login.userInfo.authority);
   const nodes = [];
   function travel(_routes, level) {
     return _routes.map((route) => {
@@ -55,7 +57,7 @@ function renderRoutes(locale) {
         if (level > 1) {
           return <MenuItem key={route.key}>{titleDom}</MenuItem>;
         }
-        if (!route.hide) {
+        if (!route.hide || authority) {
           nodes.push(
             <MenuItem key={route.key}>
               <Link to={`/${route.key}`}>{titleDom}</Link>

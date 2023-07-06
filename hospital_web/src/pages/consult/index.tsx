@@ -47,7 +47,7 @@ const formItemLayout = {
   },
 };
 
-function TagsTable() {
+function ConsultsTable() {
   const locale = useLocale();
   // 这里这个form就存储了表单的数据
   const [form] = Form.useForm();
@@ -78,6 +78,7 @@ function TagsTable() {
       Message.error('删除失败，请重试');
     }
   };
+  const authority = useSelector((state: ReducerState) => state.login.userInfo.authority);
 
   const columns = [
     {
@@ -112,57 +113,61 @@ function TagsTable() {
       title: '结束时间',
       dataIndex: 'endTime',
     },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      render: (_, record) => {
-        return record.createTime
-          ? dayjs(record.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
-          : '-';
+  ];
+  if (authority === 1) {
+    columns.push(
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (_, record) => {
+          return record.createTime
+            ? dayjs(record.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+            : '-';
+        },
       },
-    },
-    {
-      title: '修改时间',
-      dataIndex: 'updateTime',
-      render: (_, record) => {
-        return record.updateTime
-          ? dayjs(record.updateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
-          : '-';
+      {
+        title: '修改时间',
+        dataIndex: 'updateTime',
+        render: (_, record) => {
+          return record.updateTime
+            ? dayjs(record.updateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+            : '-';
+        },
       },
-    },
-    {
-      title: locale['searchTable.columns.operations'],
-      dataIndex: 'operations',
-      // 这里这个record表示的是当前行的数据
-      render: (_, record) => (
-        <div className={styles.operations}>
-          <Button
-            disabled={record.status}
-            onClick={() => onUpdate(record)}
-            type="text"
-            size="small"
-          >
-            {locale['searchTable.columns.operations.update']}
-          </Button>
-          <Popconfirm
-            disabled={record.status}
-            focusLock
-            title="确定要删除吗？"
-            onOk={() => onDelete(record)}
-            /* onCancel={() => {
+      {
+        title: locale['searchTable.columns.operations'],
+        dataIndex: 'operations',
+        // 这里这个record表示的是当前行的数据
+        render: (_, record) => (
+          <div className={styles.operations}>
+            <Button
+              disabled={record.status}
+              onClick={() => onUpdate(record)}
+              type="text"
+              size="small"
+            >
+              {locale['searchTable.columns.operations.update']}
+            </Button>
+            <Popconfirm
+              disabled={record.status}
+              focusLock
+              title="确定要删除吗？"
+              onOk={() => onDelete(record)}
+              /* onCancel={() => {
           Message.error({
             content: 'cancel',
           });
         }} */
-          >
-            <Button disabled={record.status} type="text" status="danger" size="small">
-              {locale['searchTable.columns.operations.delete']}
-            </Button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
+            >
+              <Button disabled={record.status} type="text" status="danger" size="small">
+                {locale['searchTable.columns.operations.delete']}
+              </Button>
+            </Popconfirm>
+          </div>
+        ),
+      }
+    );
+  }
 
   const ConsultState = useSelector((state: ReducerState) => state.consult);
 
@@ -328,7 +333,7 @@ function TagsTable() {
       <Card bordered={false}>
         <div className={styles.toolbar}>
           <div>
-            <Button onClick={onAdd} type="primary">
+            <Button onClick={onAdd} type="primary" disabled={!authority}>
               添加出诊
             </Button>
           </div>
@@ -467,4 +472,4 @@ function TagsTable() {
   );
 }
 
-export default TagsTable;
+export default ConsultsTable;

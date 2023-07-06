@@ -14,6 +14,9 @@ import {
 
 export const defaultRoute = 'welcome';
 
+// const authority = parseInt(localStorage.getItem('authority') || '0', 10) || 0;
+// const authority = useSelector((state: ReducerState) => state.login.userInfo.authority);
+// console.log('authority', authority);
 export const routes = [
   {
     name: 'menu.welcome',
@@ -38,6 +41,7 @@ export const routes = [
     key: 'doctor',
     icon: <IconUserGroup />,
     componentPath: 'doctor',
+    hide: true,
   },
   {
     name: 'menu.consult',

@@ -22,11 +22,14 @@ export default function LoginForm() {
   function afterLoginSuccess(params) {
     // 记录登录状态
     localStorage.setItem('token', params.token);
-    localStorage.setItem('authority', params.authority);
     // 记录用户信息到redux中
     dispatch({
       type: 'LOGIN',
-      payload: params,
+      payload: {
+        name: params.name,
+        avatar: params.avatar || 'https://t9.baidu.com/it/u=4120256093,683166077&fm=193',
+        authority: params.authority,
+      },
     });
     // 跳转首页
     window.location.href = history.createHref({

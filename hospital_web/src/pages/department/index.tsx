@@ -37,7 +37,7 @@ const formItemLayout = {
   },
 };
 
-function TagsTable() {
+function DepartmentsTable() {
   const locale = useLocale();
   // 这里这个form就存储了表单的数据
   const [form] = Form.useForm();
@@ -51,6 +51,7 @@ function TagsTable() {
     form.setFieldsValue(row);
     setTitle('修改科室');
   };
+  const authority = useSelector((state: ReducerState) => state.login.userInfo.authority);
 
   const onDelete = async (row) => {
     // console.log(row);
@@ -79,57 +80,61 @@ function TagsTable() {
       dataIndex: 'description',
       editable: true,
     },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      render: (_, record) => {
-        return record.createTime
-          ? dayjs(record.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
-          : '-';
+  ];
+  // 如果有权限，就显示操作列
+  if (authority === 1) {
+    columns.push(
+      {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        render: (_, record) => {
+          return record.createTime
+            ? dayjs(record.createTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+            : '-';
+        },
       },
-    },
-    {
-      title: '修改时间',
-      dataIndex: 'updateTime',
-      render: (_, record) => {
-        return record.updateTime
-          ? dayjs(record.updateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
-          : '-';
+      {
+        title: '修改时间',
+        dataIndex: 'updateTime',
+        render: (_, record) => {
+          return record.updateTime
+            ? dayjs(record.updateTime * 1000).format('YYYY-MM-DD HH:mm:ss')
+            : '-';
+        },
       },
-    },
-    {
-      title: locale['searchTable.columns.operations'],
-      dataIndex: 'operations',
-      // 这里这个record表示的是当前行的数据
-      render: (_, record) => (
-        <div className={styles.operations}>
-          <Button
-            disabled={record.status}
-            onClick={() => onUpdate(record)}
-            type="text"
-            size="small"
-          >
-            {locale['searchTable.columns.operations.update']}
-          </Button>
-          <Popconfirm
-            disabled={record.status}
-            focusLock
-            title="确定要删除吗？"
-            onOk={() => onDelete(record)}
-            /* onCancel={() => {
+      {
+        title: locale['searchTable.columns.operations'],
+        dataIndex: 'operations',
+        render: (_, record) => (
+          <div className={styles.operations}>
+            <Button
+              disabled={record.status}
+              onClick={() => onUpdate(record)}
+              type="text"
+              size="small"
+            >
+              {locale['searchTable.columns.operations.update']}
+            </Button>
+            <Popconfirm
+              disabled={record.status}
+              focusLock
+              title="确定要删除吗？"
+              onOk={() => onDelete(record)}
+              /* onCancel={() => {
           Message.error({
             content: 'cancel',
           });
         }} */
-          >
-            <Button disabled={record.status} type="text" status="danger" size="small">
-              {locale['searchTable.columns.operations.delete']}
-            </Button>
-          </Popconfirm>
-        </div>
-      ),
-    },
-  ];
+            >
+              <Button disabled={record.status} type="text" status="danger" size="small">
+                {locale['searchTable.columns.operations.delete']}
+              </Button>
+            </Popconfirm>
+          </div>
+        ),
+      }
+    );
+  }
 
   const DepartmentState = useSelector((state: ReducerState) => state.department);
 
@@ -147,9 +152,9 @@ function TagsTable() {
         pageSize,
         ...params,
       };
-      console.log('postData', postData);
+      // console.log('postData', postData);
       const res: any = await getList(postData);
-      console.log('res', res.data.list);
+      // console.log('res', res.data.list);
       if (res.code === 0) {
         dispatch({ type: UPDATE_LIST, payload: { data: res.data.list } });
         dispatch({
@@ -222,7 +227,7 @@ function TagsTable() {
       <Card bordered={false}>
         <div className={styles.toolbar}>
           <div>
-            <Button onClick={onAdd} type="primary">
+            <Button onClick={onAdd} type="primary" disabled={!authority}>
               添加科室
             </Button>
           </div>
@@ -289,4 +294,4 @@ function TagsTable() {
   );
 }
 
-export default TagsTable;
+export default DepartmentsTable;
